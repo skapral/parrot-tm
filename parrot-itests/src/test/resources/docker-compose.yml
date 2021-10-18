@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  tasks-service:
+    image: tasks-service:${project.version}
+    ports:
+      - 8081:8080
+    networks:
+      - parrotnet
+networks:
+  parrotnet:
