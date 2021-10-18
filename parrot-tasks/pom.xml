@@ -5,19 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.skapral.parrot</groupId>
-    <artifactId>parrot-tm</artifactId>
+    <artifactId>parrot-tasks</artifactId>
     <version>0.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>build-tools</module>
-        <module>parrot-tasks</module>
+        <module>tasks-service</module>
+        <module>tasks-docker-image</module>
     </modules>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
-
 </project>
