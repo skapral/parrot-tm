@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>com.skapral.parrot</groupId>
+        <version>0.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>parent-docker-image</artifactId>
+    <packaging>pom</packaging>
+
+
+    <properties>
+        <docker.image.name/>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <activation>
+                <file>
+                    <exists>Dockerfile</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-jar</id>
+                                <phase/>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>${docker.image.name}:${project.version}</name>
+                                    <build>
+                                        <contextDir>${project.basedir}</contextDir>
+                                        <args>
+                                            <version>${project.version}</version>
+                                        </args>
+                                        <tags>
+                                            <tag>latest</tag>
+                                        </tags>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
