@@ -1,0 +1,7 @@
+**/target/*
+**/build/*
+**/.idea/*
+**/*.iml
+**/logs/*
+pom.xml.versionsBackup
+
