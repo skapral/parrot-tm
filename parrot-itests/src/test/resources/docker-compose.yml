@@ -15,6 +15,12 @@ services:
       - 8081:8080
     networks:
       - parrotnet
+  webui:
+    image: web-ui:${project.version}
+    ports:
+      - 80:80
+    networks:
+      - parrotnet
 volumes:
   rabbitmq_data:
 networks:
