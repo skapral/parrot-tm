@@ -1,4 +1,4 @@
-package com.skapral.parrot.tasks;
+package com.skapral.parrot.tasks.data;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
