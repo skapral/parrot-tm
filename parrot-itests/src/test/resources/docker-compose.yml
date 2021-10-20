@@ -2,17 +2,12 @@ version: "3.7"
 services:
   amqp:
     image: rabbitmq:3.9.7-management
-    ports:
-      - 5672:5672
-      - 15672:15672
     networks:
       - parrotnet
     volumes:
       - rabbitmq_data:/data
   tasks-service:
     image: tasks-service:${project.version}
-    ports:
-      - 8081:8080
     networks:
       - parrotnet
   webui:
