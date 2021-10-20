@@ -14,7 +14,7 @@
 
     <modules>
         <module>parent-docker-image</module>
-        <module>parent-spring-service</module>
+        <module>parent-spring</module>
     </modules>
 
     <profiles>
