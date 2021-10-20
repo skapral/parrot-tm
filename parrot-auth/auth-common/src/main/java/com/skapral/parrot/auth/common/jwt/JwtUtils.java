@@ -22,11 +22,15 @@ public class JwtUtils {
     @Value("${jwt.expire}")
     private int jwtExpirationMs;
 
-    public String generateJwtToken(String subject) {
-        return JWT.create()
+    public String generateJwtToken(String subject, JwtClaim... claims) {
+        var jwtBuilder = JWT.create()
                 .withSubject(subject)
-                .withExpiresAt(new Date((new Date()).getTime() + jwtExpirationMs))
-                .sign(Algorithm.HMAC256(jwtSecret));
+                .withExpiresAt(new Date((new Date()).getTime() + jwtExpirationMs));
+        for(var claim : claims) {
+            jwtBuilder = jwtBuilder.withClaim(claim.name(), claim.value());
+        }
+
+        return jwtBuilder.sign(Algorithm.HMAC256(jwtSecret));
     }
 
     public String getUserNameFromJwtToken(String token) {

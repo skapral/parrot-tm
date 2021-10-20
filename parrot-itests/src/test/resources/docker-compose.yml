@@ -10,7 +10,7 @@ services:
     image: tasks-service:${project.version}
     networks:
       - parrotnet
-  auth:
+  auth-service:
     image: auth-service:${project.version}
     networks:
       - parrotnet
