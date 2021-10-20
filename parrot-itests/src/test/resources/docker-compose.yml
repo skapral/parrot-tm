@@ -10,6 +10,10 @@ services:
     image: tasks-service:${project.version}
     networks:
       - parrotnet
+  auth:
+    image: auth-service:${project.version}
+    networks:
+      - parrotnet
   webui:
     image: web-ui:${project.version}
     ports:

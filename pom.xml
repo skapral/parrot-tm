@@ -11,6 +11,7 @@
 
     <modules>
         <module>build-tools</module>
+        <module>parrot-auth</module>
         <module>parrot-tasks</module>
         <module>parrot-itests</module>
         <module>parrot-webui</module>
