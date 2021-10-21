@@ -1,5 +1,6 @@
 package com.skapral.parrot.tasks.events;
 
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +14,7 @@ public class Amqp {
     }
 
     @RabbitListener(queues = "tasks-service")
-    public void listen(String in) {
-        System.out.println("Message read from myQueue : " + in);
+    public void listen(Message message) {
+        System.out.println("Message read from myQueue : " + new String(message.getBody()));
     }
 }
