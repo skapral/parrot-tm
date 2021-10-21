@@ -1,5 +1,6 @@
 package com.skapral.parrot.itests;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
@@ -9,10 +10,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 @Testcontainers
 public class TestingTest {
-
     @Container
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static DockerComposeContainer environment =
@@ -28,6 +32,13 @@ public class TestingTest {
                     .waitingFor("accounting-service", Wait.forLogMessage(".*Started Main.*", 1));
 
     @Test
-    public void testNothing() {
+    public void testAuthentication() throws Exception {
+        var client = HttpClient.newHttpClient();
+        var req = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .uri(URI.create("http://localhost/auth/login?login=testuser"))
+                .build();
+        var resp = client.send(req, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertThat(resp.headers().map()).containsKey("Authorization");
     }
 }
