@@ -1,4 +1,4 @@
-package com.skapral.parrot.analytics.events;
+package com.skapral.parrot.accounting.events;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

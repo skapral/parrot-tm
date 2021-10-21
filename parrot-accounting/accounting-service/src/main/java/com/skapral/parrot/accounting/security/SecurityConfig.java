@@ -1,4 +1,4 @@
-package com.skapral.parrot.analytics.security;
+package com.skapral.parrot.accounting.security;
 
 import com.skapral.parrot.auth.common.jwt.JwtAuthFilter;
 import com.skapral.parrot.auth.common.security.JwtConfig;

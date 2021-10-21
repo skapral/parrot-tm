@@ -45,7 +45,7 @@ public class TasksRest {
         tasksRepo.save(task);
     }
 
-    @PostMapping
+    @PostMapping("close")
     public void closeTask(@RequestParam("id") Integer id) {
         var optTask = tasksRepo.findById(id);
         optTask.ifPresent(t -> {

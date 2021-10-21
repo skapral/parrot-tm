@@ -1,4 +1,4 @@
-package com.skapral.parrot.analytics.data;
+package com.skapral.parrot.accounting.data;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
