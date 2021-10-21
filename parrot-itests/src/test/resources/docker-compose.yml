@@ -14,6 +14,14 @@ services:
     image: auth-service:${project.version}
     networks:
       - parrotnet
+  accounting-service:
+    image: accounting-service:${project.version}
+    networks:
+      - parrotnet
+  analytics-service:
+    image: analytics-service:${project.version}
+    networks:
+      - parrotnet
   webui:
     image: web-ui:${project.version}
     ports:

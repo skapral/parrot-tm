@@ -15,6 +15,8 @@
         <module>parrot-tasks</module>
         <module>parrot-itests</module>
         <module>parrot-webui</module>
+        <module>parrot-accounting</module>
+        <module>parrot-analytics</module>
     </modules>
 
     <properties>
