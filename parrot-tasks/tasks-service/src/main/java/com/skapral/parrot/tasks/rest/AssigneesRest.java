@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("assignees")
 @Transactional
 public class AssigneesRest {
+    private final AssigneesRepository assigneesRepo;
+
     @Autowired
-    private AssigneesRepository assigneesRepo;
+    public AssigneesRest(AssigneesRepository assigneesRepo) {
+        this.assigneesRepo = assigneesRepo;
+    }
 
     @GetMapping
     public Iterable<Assignee> assignees() {

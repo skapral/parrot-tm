@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 @Configuration
-@Import({JwtConfig.class})
+@Import({AuthenticationDependencies.class, JwtConfig.class})
 @EnableWebSecurity
 public class AuthenticationConfig extends com.skapral.parrot.auth.common.security.AuthenticationConfig {
     private final UserDetailsService userDetailsService;

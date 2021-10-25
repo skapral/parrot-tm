@@ -1,7 +1,8 @@
 package com.skapral.parrot.auth.security;
 
-import com.skapral.parrot.auth.data.SpringDataJdbc;
+import com.skapral.parrot.auth.data.Repositories;
 import com.skapral.parrot.auth.data.UsersRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -9,10 +10,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@Import(SpringDataJdbc.class)
+@Import({Repositories.class})
 public class AuthenticationDependencies {
     private final UsersRepository usersRepository;
 
+    @Autowired
     public AuthenticationDependencies(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }

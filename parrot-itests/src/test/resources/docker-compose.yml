@@ -1,5 +1,14 @@
 version: "3.7"
 services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - parrotnet
   amqp:
     image: rabbitmq:3.9.7-management
     networks:
@@ -30,5 +39,6 @@ services:
       - parrotnet
 volumes:
   rabbitmq_data:
+  db_data:
 networks:
   parrotnet:
