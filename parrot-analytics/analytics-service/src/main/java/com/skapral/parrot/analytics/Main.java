@@ -1,6 +1,6 @@
 package com.skapral.parrot.analytics;
 
-import com.skapral.parrot.analytics.events.EventsConfig;
+import com.skapral.parrot.common.events.EventsConfig;
 import com.skapral.parrot.analytics.security.SecurityConfig;
 import com.skapral.parrot.common.data.SpringDataJdbc;
 import org.springframework.boot.SpringApplication;

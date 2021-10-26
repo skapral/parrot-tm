@@ -11,3 +11,6 @@ db:
   name: tasks
   user: postgres
   password: admin
+
+amqp:
+  inbox: tasks-service

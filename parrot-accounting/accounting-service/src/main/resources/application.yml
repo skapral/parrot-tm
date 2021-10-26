@@ -5,6 +5,9 @@ spring:
     port: 5672
     username: guest
 
+amqp:
+  inbox: accounting-service
+
 db:
   host: postgres
   port: 5432

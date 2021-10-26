@@ -21,6 +21,11 @@
         </dependency>
         <dependency>
             <groupId>com.skapral.parrot</groupId>
+            <artifactId>events-config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.skapral.parrot</groupId>
             <artifactId>auth-common</artifactId>
             <version>${project.version}</version>
         </dependency>

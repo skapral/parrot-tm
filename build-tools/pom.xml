@@ -13,6 +13,7 @@
         <module>parent</module>
         <module>logback-config</module>
         <module>spring-jdbc-config</module>
+        <module>events-config</module>
     </modules>
 
     <properties>

@@ -1,6 +1,17 @@
+spring:
+  rabbitmq:
+    host: amqp
+    password: guest
+    port: 5672
+    username: guest
+
 db:
   host: postgres
   port: 5432
   name: auth
   user: postgres
   password: admin
+
+
+amqp:
+  inbox: auth-service
