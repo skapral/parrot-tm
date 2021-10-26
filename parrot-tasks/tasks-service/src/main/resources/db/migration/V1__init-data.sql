@@ -1,17 +1,13 @@
-create sequence if not exists assigneeseq as integer start with 100 increment by 1;
-
 create table if not exists assignee
 (
-    id integer primary key default nextval('assigneeseq'),
+    id uuid primary key default gen_random_uuid(),
     name varchar(64)
 );
 
-create sequence if not exists taskseq as integer start with 100 increment by 1;
-
 create table if not exists task
 (
-    id integer primary key default nextval('taskseq'),
+    id uuid primary key default gen_random_uuid(),
     description varchar(1024),
-    assignee integer references assignee(id),
+    assignee uuid references assignee(id),
     status varchar(16)
 );

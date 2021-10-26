@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.Random;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("tasks")
@@ -46,7 +47,7 @@ public class TasksRest {
     }
 
     @PostMapping("close")
-    public void closeTask(@RequestParam("id") Integer id) {
+    public void closeTask(@RequestParam("id") UUID id) {
         var optTask = tasksRepo.findById(id);
         optTask.ifPresent(t -> {
             t.setStatus(Status.DONE);

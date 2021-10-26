@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Task {
-    @Id private Integer id;
+    @Id private UUID id;
     private String description;
     private Status status;
-    private Integer assignee;
+    private UUID assignee;
 }
