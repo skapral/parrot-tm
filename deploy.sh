@@ -1,4 +1,4 @@
 #!/bin/sh
 
-docker-compose -f parrot-itests/target/test-classes/docker-compose.yml $*
+cd parrot-itests/target/test-classes && docker-compose $* ; cd -
 
