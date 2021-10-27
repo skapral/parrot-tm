@@ -5,20 +5,22 @@ services:
     environment:
       POSTGRES_PASSWORD: admin
       POSTGRES_USER: postgres
+    ports:
+      - 5432:5432
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
       - parrotnet
   amqp:
     image: rabbitmq:3.9.7-management
-    networks:
-      - parrotnet
     ports:
       - 15672:15672
     volumes:
       - rabbitmq_data:/data
       - ${PWD}/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ${PWD}/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json:ro
+    networks:
+      - parrotnet
   tasks-service:
     image: tasks-service:${project.version}
     networks:
