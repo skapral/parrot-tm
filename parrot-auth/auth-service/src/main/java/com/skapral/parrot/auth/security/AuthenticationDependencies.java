@@ -1,27 +1,30 @@
 package com.skapral.parrot.auth.security;
 
 import com.skapral.parrot.auth.data.Repositories;
-import com.skapral.parrot.auth.data.UsersRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @Import({Repositories.class})
 public class AuthenticationDependencies {
-    private final UsersRepository usersRepository;
+    private final JdbcTemplate jdbcTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public AuthenticationDependencies(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public AuthenticationDependencies(JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new com.skapral.parrot.auth.security.UserDetailsService(usersRepository);
+        return new com.skapral.parrot.auth.security.UserDetailsService(jdbcTemplate, rabbitTemplate);
     }
 
     @Bean
