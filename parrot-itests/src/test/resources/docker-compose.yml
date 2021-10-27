@@ -12,13 +12,11 @@ services:
     networks:
       - parrotnet
   amqp:
-    image: rabbitmq:3.9.7-management
+    image: parrot-rabbitmq:${project.version}
     ports:
       - 15672:15672
     volumes:
       - rabbitmq_data:/data
-      - ${PWD}/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ${PWD}/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json:ro
     networks:
       - parrotnet
   tasks-service:

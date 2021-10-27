@@ -24,7 +24,7 @@ public class SendUserMessage implements Operation {
     @Override
     public final void execute() {
         rabbitTemplate.convertAndSend(
-                "handshake",
+                "outbox",
                 Events.USER.name(),
                 new User(
                         id,
