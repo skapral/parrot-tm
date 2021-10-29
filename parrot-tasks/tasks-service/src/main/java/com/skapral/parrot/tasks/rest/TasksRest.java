@@ -1,11 +1,13 @@
 package com.skapral.parrot.tasks.rest;
 
-import com.skapral.parrot.tasks.data.AssigneesRepository;
-import com.skapral.parrot.tasks.data.Status;
 import com.skapral.parrot.tasks.data.Task;
-import com.skapral.parrot.tasks.data.TasksRepository;
-import io.vavr.collection.List;
+import com.skapral.parrot.tasks.data.Tasks;
+import com.skapral.parrot.tasks.ops.AssignAllTasks;
+import com.skapral.parrot.tasks.ops.CompleteTask;
+import com.skapral.parrot.tasks.ops.ComplexOperation;
+import com.skapral.parrot.tasks.ops.CreateTask;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,51 +20,56 @@ import java.util.UUID;
 @Transactional
 public class TasksRest {
     @Autowired
-    private TasksRepository tasksRepo;
-    @Autowired
-    private AssigneesRepository assigneeRepo;
+    private JdbcTemplate template;
 
+    @Autowired
+    private Random random;
 
     @PostConstruct
     public void init() {
-        var tasks = List.of(
-                new Task(null, "test task 1", Status.IN_PROGRESS, null),
-                new Task(null, "test task 2", Status.IN_PROGRESS, null),
-                new Task(null, "test task 3", Status.IN_PROGRESS, null)
-        );
-
-        tasksRepo.saveAll(tasks);
+        new ComplexOperation(
+                new CreateTask(
+                        template,
+                        UUID.randomUUID(),
+                        "test task 1"
+                ),
+                new CreateTask(
+                        template,
+                        UUID.randomUUID(),
+                        "test task 2"
+                ),
+                new CreateTask(
+                        template,
+                        UUID.randomUUID(),
+                        "test task 3"
+                )
+        ).execute();
     }
 
     @GetMapping
     public Iterable<Task> tasks() {
-        return tasksRepo.findAll();
+        return new Tasks(template).get();
     }
 
     @PostMapping
     public void newTask(@RequestParam("description") String description) {
-        var task = new Task();
-        task.setDescription(description);
-        tasksRepo.save(task);
+        new CreateTask(
+                template,
+                UUID.randomUUID(),
+                description
+        ).execute();
     }
 
     @PostMapping("close")
     public void closeTask(@RequestParam("id") UUID id) {
-        var optTask = tasksRepo.findById(id);
-        optTask.ifPresent(t -> {
-            t.setStatus(Status.DONE);
-            tasksRepo.save(t);
-        });
+        new CompleteTask(
+                template,
+                id
+        ).execute();
     }
 
     @PostMapping("assign")
     public void assign() {
-        var random = new Random();
-        var tasks = List.ofAll(tasksRepo.findAll());
-        var assignees = List.ofAll(assigneeRepo.findAll());
-        tasks.forEach(t -> {
-            t.setAssignee(assignees.get(random.nextInt(assignees.length())).getId());
-        });
-        tasksRepo.saveAll(tasks);
+        new AssignAllTasks(template, random).execute();
     }
 }
