@@ -1,29 +1,23 @@
 package com.skapral.parrot.accounting.ops;
 
-import com.skapral.parrot.accounting.data.AccountsRepository;
-import com.skapral.parrot.accounting.data.TransactionLog;
-import com.skapral.parrot.accounting.data.TransactionLogRepository;
 import io.vavr.collection.List;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.UUID;
 
 public class CallItADay implements Operation {
-    private final TransactionLogRepository transactionsRepo;
-    private final AccountsRepository accountsRepo;
+    private final JdbcTemplate template;
 
-    public CallItADay(TransactionLogRepository transactionsRepo, AccountsRepository accountsRepo) {
-        this.transactionsRepo = transactionsRepo;
-        this.accountsRepo = accountsRepo;
+    public CallItADay(JdbcTemplate template) {
+        this.template = template;
     }
 
     @Override
     public final void execute() {
-        var ts = List.ofAll(accountsRepo.findAll())
-                .map(acc -> {
-                    var tl = new TransactionLog();
-                    tl.setAccountId(acc.getId());
-                    tl.setDescription("Working day over, time for payback");
-                    tl.setValue(0);
-                    return tl;
-                });
-        transactionsRepo.saveAll(ts);
+        var accounts = List.ofAll(template.queryForList("SELECT id FROM account", UUID.class));
+        template.batchUpdate(
+                "INSERT INTO transactionlog (id, accountid, description, value) values (?, ?, ?, ?)",
+                accounts.map(accId -> new Object[] {UUID.randomUUID(), accId, "Working day over, time for payback", 0}).asJava()
+        );
     }
 }

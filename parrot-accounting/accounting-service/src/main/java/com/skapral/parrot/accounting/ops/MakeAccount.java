@@ -1,25 +1,20 @@
 package com.skapral.parrot.accounting.ops;
 
-import com.skapral.parrot.accounting.data.Account;
-import com.skapral.parrot.accounting.data.AccountsRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.UUID;
 
 public class MakeAccount implements Operation {
-    private final AccountsRepository repository;
-    private final Integer accountId;
-    private final String accountLogin;
+    private final JdbcTemplate template;
+    private final UUID accountId;
 
-    public MakeAccount(AccountsRepository repository, Integer accountId, String accountLogin) {
-        this.repository = repository;
+    public MakeAccount(JdbcTemplate template, UUID accountId) {
+        this.template = template;
         this.accountId = accountId;
-        this.accountLogin = accountLogin;
     }
 
     @Override
     public final void execute() {
-        var account = new Account(accountId, accountLogin);
-        if(repository.existsById(accountId)) {
-            throw new RuntimeException("Account id conflict - " + accountId);
-        }
-        repository.save(account);
+        template.update("INSERT INTO account (id, value) VALUES (?, ?)", accountId, 0);
     }
 }

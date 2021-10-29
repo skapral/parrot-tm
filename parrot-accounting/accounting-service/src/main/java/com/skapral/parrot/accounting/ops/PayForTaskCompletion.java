@@ -1,39 +1,26 @@
 package com.skapral.parrot.accounting.ops;
 
 
-import com.skapral.parrot.accounting.data.AccountsRepository;
-import com.skapral.parrot.accounting.data.RewardRepository;
-import com.skapral.parrot.accounting.data.TransactionLog;
-import com.skapral.parrot.accounting.data.TransactionLogRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.UUID;
 
 public class PayForTaskCompletion implements Operation {
-    private final AccountsRepository accounts;
-    private final TransactionLogRepository transactionLogs;
-    private final RewardRepository rewards;
-    private final Integer taskId;
-    private final String taskDescription;
-    private final Integer assigneeId;
+    private final JdbcTemplate template;
+    private final UUID taskId;
+    private final UUID assigneeId;
 
-    public PayForTaskCompletion(AccountsRepository accounts, TransactionLogRepository transactionLogs, RewardRepository rewards, Integer taskId, String taskDescription, Integer assigneeId) {
-        this.accounts = accounts;
-        this.transactionLogs = transactionLogs;
-        this.rewards = rewards;
+    public PayForTaskCompletion(JdbcTemplate template, UUID taskId, UUID assigneeId) {
+        this.template = template;
         this.taskId = taskId;
-        this.taskDescription = taskDescription;
         this.assigneeId = assigneeId;
     }
 
     @Override
     public final void execute() {
-        if(accounts.existsById(assigneeId)) {
-            var reward = rewards.findById(taskId).orElseThrow(() -> new RuntimeException("No such task " + taskId));
-            var transaction = new TransactionLog();
-            transaction.setAccountId(assigneeId);
-            transaction.setDescription(taskDescription);
-            transaction.setValue(reward.getReward());
-            transactionLogs.save(transaction);
-        } else {
-            throw new RuntimeException("No such account " + assigneeId);
-        }
+        var rewardForCompletion = template.queryForObject("SELECT reward FROM reward WHERE taskid = ?", Integer.class, taskId);
+        template.update("UPDATE account SET value = value + ? WHERE id = ?", rewardForCompletion, assigneeId);
+        template.update("INSERT INTO transactionlog (id, accountid, description, value) values (?, ?, ?, ?)",
+                UUID.randomUUID(), assigneeId, "Rewarded for task completion - " + taskId, rewardForCompletion);
     }
 }
