@@ -3,20 +3,14 @@ package com.skapral.parrot.common.data;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
-import org.postgresql.Driver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
-import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.TransactionManager;
 
 import javax.sql.DataSource;
@@ -24,8 +18,7 @@ import java.sql.*;
 import java.util.function.Function;
 
 @Configuration
-@EnableJdbcRepositories
-public class SpringDataJdbc extends AbstractJdbcConfiguration {
+public class SpringDataJdbc {
     private static final Function<String, String> DB_QUERY = s -> String.format("SELECT datname FROM pg_catalog.pg_database WHERE datname = '%s'", s);
     private static final Logger log = LoggerFactory.getLogger(SpringDataJdbc.class);
 
@@ -79,12 +72,12 @@ public class SpringDataJdbc extends AbstractJdbcConfiguration {
     }
 
     @Bean
-    public NamedParameterJdbcOperations namedParameterJdbcOperations(DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
+    public TransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
     @Bean
-    public TransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
+    public JdbcTemplate jdbctemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 }
