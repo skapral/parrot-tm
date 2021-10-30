@@ -1,5 +1,6 @@
 package com.skapral.parrot.auth.data;
 
+import com.skapral.parrot.common.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
