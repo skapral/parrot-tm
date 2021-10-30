@@ -1,17 +1,21 @@
 package com.skapral.parrot.tasks.rest;
 
-import com.skapral.parrot.common.SequentialOperation;
+import com.skapral.parrot.common.DoAndNotify;
+import com.skapral.parrot.common.Event;
+import com.skapral.parrot.common.events.EventType;
+import com.skapral.parrot.common.events.impl.RabbitEvent;
 import com.skapral.parrot.tasks.data.Task;
 import com.skapral.parrot.tasks.data.Tasks;
-import com.skapral.parrot.tasks.ops.AssignAllTasks;
+import com.skapral.parrot.tasks.data.TasksInProgress;
+import com.skapral.parrot.tasks.ops.AssignTasks;
 import com.skapral.parrot.tasks.ops.CompleteTask;
 import com.skapral.parrot.tasks.ops.CreateTask;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.util.Random;
 import java.util.UUID;
 
@@ -20,56 +24,65 @@ import java.util.UUID;
 @Transactional
 public class TasksRest {
     @Autowired
-    private JdbcTemplate template;
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private Random random;
 
-    @PostConstruct
-    public void init() {
-        new SequentialOperation(
-                new CreateTask(
-                        template,
-                        UUID.randomUUID(),
-                        "test task 1"
-                ),
-                new CreateTask(
-                        template,
-                        UUID.randomUUID(),
-                        "test task 2"
-                ),
-                new CreateTask(
-                        template,
-                        UUID.randomUUID(),
-                        "test task 3"
-                )
-        ).execute();
-    }
-
     @GetMapping
     public Iterable<Task> tasks() {
-        return new Tasks(template).get();
+        return new Tasks(jdbcTemplate).get();
     }
 
     @PostMapping
     public void newTask(@RequestParam("description") String description) {
-        new CreateTask(
-                template,
-                UUID.randomUUID(),
-                description
-        ).execute();
+        var taskId = UUID.randomUUID();
+        new DoAndNotify(
+                new CreateTask(
+                        jdbcTemplate,
+                        taskId,
+                        description
+                ),
+                new RabbitEvent<>(
+                        rabbitTemplate,
+                        "outbox",
+                        "",
+                        EventType.TASK_NEW,
+                        new com.skapral.parrot.common.events.data.Task(taskId)
+                )
+        );
     }
 
     @PostMapping("close")
     public void closeTask(@RequestParam("id") UUID id) {
-        new CompleteTask(
-                template,
-                id
+        new DoAndNotify(
+                new CompleteTask(
+                        jdbcTemplate,
+                        id
+                ),
+                new RabbitEvent<>(
+                        rabbitTemplate,
+                        "outbox",
+                        "",
+                        EventType.TASK_COMPLETED,
+                        new com.skapral.parrot.common.events.data.Task(id)
+                )
         ).execute();
     }
 
     @PostMapping("assign")
     public void assign() {
-        new AssignAllTasks(template, random).execute();
+        var tasksInProgress = new TasksInProgress(jdbcTemplate).get();
+        new AssignTasks(jdbcTemplate, random, tasksInProgress).execute();
+        tasksInProgress.map(t -> new RabbitEvent<>(
+                rabbitTemplate,
+                "outbox",
+                "",
+                EventType.TASK_ASSIGNED,
+                new com.skapral.parrot.common.events.data.Task(t)
+        )).forEach(Event::send);
     }
 }

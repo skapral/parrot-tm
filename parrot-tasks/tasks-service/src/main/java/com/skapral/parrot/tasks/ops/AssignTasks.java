@@ -8,20 +8,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.Random;
 import java.util.UUID;
 
-public class AssignAllTasks implements Operation {
+public class AssignTasks implements Operation {
     private final JdbcTemplate template;
     private final Random random;
+    private final List<UUID> taskIds;
 
-    public AssignAllTasks(JdbcTemplate template, Random random) {
+    public AssignTasks(JdbcTemplate template, Random random, List<UUID> taskIds) {
         this.template = template;
         this.random = random;
+        this.taskIds = taskIds;
     }
 
     @Override
     public final void execute() {
-        var tasks = List.ofAll(template.queryForList("SELECT id FROM tasks WHERE status = 'IN_PROGRESS'", UUID.class));
         var candidates = List.ofAll(template.queryForList("SELECT id FROM assignees", UUID.class));
-        tasks.map(t -> Tuple.of(t, candidates.get(random.nextInt(candidates.size()))))
+        taskIds.map(t -> Tuple.of(t, candidates.get(random.nextInt(candidates.size()))))
                 .forEach(tpl -> {
                     var taskId = tpl._1;
                     var assigneeId = tpl._2;
