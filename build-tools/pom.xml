@@ -11,10 +11,6 @@
 
     <modules>
         <module>parent</module>
-        <module>commons</module>
-        <module>commons-config</module>
-        <module>spring-jdbc-config</module>
-        <module>events-config</module>
     </modules>
 
     <properties>
@@ -22,6 +18,21 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.vavr</groupId>
+                <artifactId>vavr</artifactId>
+                <version>0.10.3</version>
+            </dependency>
+            <dependency>
+                <groupId>io.vavr</groupId>
+                <artifactId>vavr-jackson</artifactId>
+                <version>0.10.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>

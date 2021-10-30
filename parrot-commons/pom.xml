@@ -5,20 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.skapral.parrot</groupId>
-    <artifactId>parrot-tm</artifactId>
+    <artifactId>parrot-commons</artifactId>
     <version>0.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>build-tools</module>
-        <module>parrot-commons</module>
-        <module>docker-images</module>
-
-        <module>parrot-auth</module>
-        <module>parrot-tasks</module>
-        <module>parrot-webui</module>
-        <module>parrot-accounting</module>
-        <module>parrot-analytics</module>
-        <module>parrot-itests</module>
+        <module>commons</module>
+        <module>commons-config</module>
+        <module>events-config</module>
+        <module>spring-jdbc-config</module>
+        <module>auth-common</module>
     </modules>
 </project>

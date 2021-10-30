@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>auth-common</module>
         <module>auth-service</module>
         <module>auth-docker-image</module>
     </modules>
