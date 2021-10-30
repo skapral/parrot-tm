@@ -1,5 +1,6 @@
 package com.skapral.parrot.common.data;
 
+import com.skapral.parrot.common.JacksonConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionManager;
@@ -18,6 +20,7 @@ import java.sql.*;
 import java.util.function.Function;
 
 @Configuration
+@Import(JacksonConfig.class)
 public class SpringDataJdbc {
     private static final Function<String, String> DB_QUERY = s -> String.format("SELECT datname FROM pg_catalog.pg_database WHERE datname = '%s'", s);
     private static final Logger log = LoggerFactory.getLogger(SpringDataJdbc.class);
