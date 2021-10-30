@@ -1,10 +1,10 @@
 package com.skapral.parrot.tasks.rest;
 
+import com.skapral.parrot.common.SequentialOperation;
 import com.skapral.parrot.tasks.data.Task;
 import com.skapral.parrot.tasks.data.Tasks;
 import com.skapral.parrot.tasks.ops.AssignAllTasks;
 import com.skapral.parrot.tasks.ops.CompleteTask;
-import com.skapral.parrot.tasks.ops.ComplexOperation;
 import com.skapral.parrot.tasks.ops.CreateTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +27,7 @@ public class TasksRest {
 
     @PostConstruct
     public void init() {
-        new ComplexOperation(
+        new SequentialOperation(
                 new CreateTask(
                         template,
                         UUID.randomUUID(),

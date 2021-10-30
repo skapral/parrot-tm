@@ -1,5 +1,6 @@
 package com.skapral.parrot.tasks.ops;
 
+import com.skapral.parrot.common.Operation;
 import com.skapral.parrot.tasks.data.Status;
 import org.springframework.jdbc.core.JdbcTemplate;
 

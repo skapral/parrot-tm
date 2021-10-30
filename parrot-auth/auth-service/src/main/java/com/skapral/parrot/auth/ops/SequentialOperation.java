@@ -1,5 +1,6 @@
 package com.skapral.parrot.auth.ops;
 
+import com.skapral.parrot.common.Operation;
 import io.vavr.collection.List;
 
 public class SequentialOperation implements Operation {

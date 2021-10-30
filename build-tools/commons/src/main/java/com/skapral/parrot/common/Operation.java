@@ -1,4 +1,4 @@
-package com.skapral.parrot.tasks.ops;
+package com.skapral.parrot.common;
 
 public interface Operation {
     void execute();

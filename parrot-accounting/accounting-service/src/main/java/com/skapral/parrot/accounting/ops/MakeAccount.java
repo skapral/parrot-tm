@@ -1,5 +1,6 @@
 package com.skapral.parrot.accounting.ops;
 
+import com.skapral.parrot.common.Operation;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.UUID;

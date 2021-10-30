@@ -1,5 +1,6 @@
 package com.skapral.parrot.tasks.ops;
 
+import com.skapral.parrot.common.Operation;
 import io.vavr.Tuple;
 import io.vavr.collection.List;
 import org.springframework.jdbc.core.JdbcTemplate;

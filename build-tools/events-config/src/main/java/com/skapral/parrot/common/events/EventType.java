@@ -1,7 +1,7 @@
 package com.skapral.parrot.common.events;
 
-public enum Events {
-    USER,
+public enum EventType {
+    NEW_USER,
     TASK_NEW,
     TASK_ESTIMATED,
     TASK_ASSIGNED,
