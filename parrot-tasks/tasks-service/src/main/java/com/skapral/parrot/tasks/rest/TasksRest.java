@@ -19,7 +19,6 @@ import java.util.Random;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("tasks")
 @Transactional
 public class TasksRest {
     @Autowired
@@ -52,7 +51,7 @@ public class TasksRest {
                         EventType.TASK_NEW,
                         new com.skapral.parrot.common.events.data.Task(taskId)
                 )
-        );
+        ).execute();
     }
 
     @PostMapping("close")

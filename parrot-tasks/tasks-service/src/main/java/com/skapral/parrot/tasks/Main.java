@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Import;
 import java.util.Random;
 
 @SpringBootApplication
+@ComponentScan("com.skapral.parrot.tasks.rest")
 @Import({EventsConfig.class, SpringDataJdbc.class, SecurityConfig.class})
-@ComponentScan("com.skapral.parrot.tasks.data")
 public class Main {
     public static void main(String... args) {
         SpringApplication.run(Main.class);
