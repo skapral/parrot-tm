@@ -21,6 +21,7 @@ public class TestingTest {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static DockerComposeContainer environment =
             new DockerComposeContainer(new File("target/test-classes/docker-compose.yml"))
+                    .withEnv("TEST_ENVIRONMENT", "false")
                     .withExposedService("webui", 80)
                     .withLogConsumer("tasks-service", new Slf4jLogConsumer(LoggerFactory.getLogger("TASKS     ")))
                     .withLogConsumer("auth-service", new Slf4jLogConsumer(LoggerFactory.getLogger("AUTH      ")))

@@ -1,4 +1,4 @@
-package com.skapral.parrot.auth.common.jwt;
+package com.skapral.parrot.auth.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+public class AuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(
             HttpServletRequest request,

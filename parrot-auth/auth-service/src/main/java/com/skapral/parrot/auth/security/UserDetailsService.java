@@ -1,5 +1,6 @@
 package com.skapral.parrot.auth.security;
 
+import com.skapral.parrot.auth.common.RoleAuthority;
 import com.skapral.parrot.auth.data.Role;
 import com.skapral.parrot.auth.data.UserByLogin;
 import com.skapral.parrot.auth.ops.CreateUserIfDoesntExist;
@@ -35,7 +36,7 @@ public class UserDetailsService implements org.springframework.security.core.use
 
         return new UserByLogin(jdbcTemplate, login)
                 .get()
-                .map(user ->  new User(user.getLogin(), "", List.of(new RoleAuthority(user.getRole())).asJava()))
+                .map(user ->  new User(user.getId().toString(), "", List.of(new RoleAuthority(user.getRole().name())).asJava()))
                 .orElseThrow(() -> new UsernameNotFoundException(login + " not found"));
     }
 }

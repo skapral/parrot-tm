@@ -1,6 +1,6 @@
 package com.skapral.parrot.auth.common.security;
 
-import com.skapral.parrot.auth.common.jwt.JwtAuthFilter;
+import com.skapral.parrot.auth.common.AuthFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -9,9 +9,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 public abstract class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected final AuthenticationEntryPoint authEntryPoint;
-    protected final JwtAuthFilter authFilter;
+    protected final AuthFilter authFilter;
 
-    public SecurityConfig(AuthenticationEntryPoint authEntryPoint, JwtAuthFilter authFilter) {
+    public SecurityConfig(AuthenticationEntryPoint authEntryPoint, AuthFilter authFilter) {
         this.authEntryPoint = authEntryPoint;
         this.authFilter = authFilter;
     }

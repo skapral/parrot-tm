@@ -1,6 +1,6 @@
 package com.skapral.parrot.accounting.security;
 
-import com.skapral.parrot.auth.common.jwt.JwtAuthFilter;
+import com.skapral.parrot.auth.common.AuthFilter;
 import com.skapral.parrot.auth.common.security.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 @EnableWebSecurity
 public class SecurityConfig extends com.skapral.parrot.auth.common.security.SecurityConfig {
     @Autowired
-    public SecurityConfig(AuthenticationEntryPoint authEntryPoint, JwtAuthFilter authFilter) {
+    public SecurityConfig(AuthenticationEntryPoint authEntryPoint, AuthFilter authFilter) {
         super(authEntryPoint, authFilter);
     }
 

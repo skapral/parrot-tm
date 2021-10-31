@@ -1,6 +1,6 @@
 package com.skapral.parrot.auth.security;
 
-import com.skapral.parrot.auth.common.jwt.JwtAuthFilter;
+import com.skapral.parrot.auth.common.AuthFilter;
 import com.skapral.parrot.auth.common.security.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ public class AuthenticationConfig extends com.skapral.parrot.auth.common.securit
             AuthenticationEntryPoint authEntryPoint,
             PasswordEncoder passwordEncoder,
             UserDetailsService userDetailsService,
-            JwtAuthFilter authFilter
+            AuthFilter authFilter
     ) {
         super(authEntryPoint, passwordEncoder, userDetailsService, authFilter);
         this.userDetailsService = userDetailsService;

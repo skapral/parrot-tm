@@ -1,7 +1,7 @@
-package com.skapral.parrot.auth.common.jwt;
+package com.skapral.parrot.auth.common;
 
+import io.vavr.collection.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -15,27 +15,30 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
-@Slf4j
-public class JwtAuthFilter extends OncePerRequestFilter {
-    private final JwtUtils jwtUtils;
+import java.util.Optional;
 
-    @Autowired
-    public JwtAuthFilter(JwtUtils jwtUtils) {
-        this.jwtUtils = jwtUtils;
+
+@Slf4j
+public class AuthFilter extends OncePerRequestFilter {
+    private final List<UserInfoExtractor> extractors;
+
+
+    public AuthFilter(UserInfoExtractor... extractors) {
+        this.extractors = List.of(extractors);
     }
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
-        var jwtOpt = jwtUtils.parseJwt(request);
-        jwtOpt
-                .filter(jwtUtils::validateJwtToken)
-                .ifPresent(jwt -> {
-                    log.info("JWT {}", jwt);
-                    var userDetails = new User(jwtUtils.getUserNameFromJwtToken(jwt), "", Collections.emptyList());
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        extractors
+                .map(e -> e.userInfo(request))
+                .find(e -> e.isPresent())
+                .toJavaOptional()
+                .map(Optional::get)
+                .ifPresent(userInfo -> {
+                    var user = userInfo.getLogin();
+                    var role = userInfo.getRole();
+                    log.info("USER {} {}", user, role);
+                    var userDetails = new User(user, "", Collections.singleton(new RoleAuthority(role)));
                     var authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, "", userDetails.getAuthorities()
                     );

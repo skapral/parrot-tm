@@ -1,10 +1,10 @@
 package com.skapral.parrot.auth.rest;
 
 
+import com.skapral.parrot.auth.common.RoleAuthority;
 import com.skapral.parrot.auth.common.jwt.JwtClaim;
 import com.skapral.parrot.auth.common.jwt.JwtUtils;
 import com.skapral.parrot.auth.data.Role;
-import com.skapral.parrot.auth.security.RoleAuthority;
 import io.vavr.collection.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +29,7 @@ class RolesClaim implements JwtClaim {
 
     @Override
     public final String name() {
-        return "roles";
+        return "role";
     }
 
     @Override
@@ -62,10 +62,11 @@ public class AuthRest {
                 .filter(a -> a instanceof RoleAuthority)
                 .map(a -> (RoleAuthority) a)
                 .map(a -> a.role)
+                .map(Role::valueOf)
                 .collect(List.collector());
 
         var jwtToken = jwtUtils.generateJwtToken(
-                login, new RolesClaim(roles)
+                auth.getName(), new RolesClaim(roles)
         );
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
