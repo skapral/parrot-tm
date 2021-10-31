@@ -3,11 +3,10 @@ package com.skapral.parrot.tasks.rest;
 import com.skapral.parrot.common.DoAndNotify;
 import com.skapral.parrot.common.Event;
 import com.skapral.parrot.common.events.EventType;
+import com.skapral.parrot.common.events.data.TaskAssignment;
 import com.skapral.parrot.common.events.impl.RabbitEvent;
-import com.skapral.parrot.tasks.data.Task;
-import com.skapral.parrot.tasks.data.Tasks;
-import com.skapral.parrot.tasks.data.TasksInProgress;
-import com.skapral.parrot.tasks.ops.AssignTasks;
+import com.skapral.parrot.tasks.data.*;
+import com.skapral.parrot.tasks.ops.DoTaskAssignments;
 import com.skapral.parrot.tasks.ops.CompleteTask;
 import com.skapral.parrot.tasks.ops.CreateTask;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -75,14 +74,24 @@ public class TasksRest {
 
     @PostMapping("assign")
     public void assign() {
-        var tasksInProgress = new TasksInProgress(jdbcTemplate).get();
-        new AssignTasks(jdbcTemplate, random, tasksInProgress).execute();
-        tasksInProgress.map(t -> new RabbitEvent<>(
-                rabbitTemplate,
-                "outbox",
-                "",
-                EventType.TASK_ASSIGNED,
-                new com.skapral.parrot.common.events.data.Task(t)
-        )).forEach(Event::send);
+        var taskIds = new TasksInProgress(jdbcTemplate).get();
+        var taskAssignments = new RandomTasksAssignments(
+                taskIds,
+                new AllPossibleAssignees(jdbcTemplate).get(),
+                random
+        ).get();
+        new DoAndNotify(
+            new DoTaskAssignments(
+                    jdbcTemplate,
+                    taskAssignments
+            ),
+            new RabbitEvent<>(
+                    rabbitTemplate,
+                    "outbox",
+                    "",
+                    EventType.TASKS_REASSIGNED,
+                    taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
+            )
+        ).execute();
     }
 }

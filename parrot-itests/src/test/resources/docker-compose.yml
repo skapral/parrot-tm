@@ -21,18 +21,26 @@ services:
       - parrotnet
   tasks-service:
     image: tasks-service:${project.version}
+    environment:
+      - TEST_ENVIRONMENT
     networks:
       - parrotnet
   auth-service:
     image: auth-service:${project.version}
+    environment:
+      - TEST_ENVIRONMENT
     networks:
       - parrotnet
   accounting-service:
     image: accounting-service:${project.version}
+    environment:
+      - TEST_ENVIRONMENT
     networks:
       - parrotnet
   analytics-service:
     image: analytics-service:${project.version}
+    environment:
+      - TEST_ENVIRONMENT
     networks:
       - parrotnet
   webui:

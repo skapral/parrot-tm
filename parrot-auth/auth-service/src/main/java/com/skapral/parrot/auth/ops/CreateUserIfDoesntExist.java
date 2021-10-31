@@ -18,7 +18,7 @@ public class CreateUserIfDoesntExist extends DoIfUserDoesntExist {
                 login,
                 new DoAndNotify(
                     new NewUser(jdbcTemplate, id, login, role),
-                    new RabbitEvent<>(rabbitTemplate, "outbox", "", EventType.NEW_USER, new User(id, login))
+                    new RabbitEvent<>(rabbitTemplate, "outbox", "", EventType.USER_NEW, new User(id, login))
                 )
         );
     }
