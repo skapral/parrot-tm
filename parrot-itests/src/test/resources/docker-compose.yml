@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_USER: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -14,7 +14,8 @@ services:
   amqp:
     image: parrot-rabbitmq:${project.version}
     ports:
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/data
     networks:
