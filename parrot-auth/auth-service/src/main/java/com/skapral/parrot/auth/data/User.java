@@ -1,5 +1,6 @@
 package com.skapral.parrot.auth.data;
 
+import com.pragmaticobjects.oo.equivalence.base.EObjectHint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+@EObjectHint(enabled = false)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

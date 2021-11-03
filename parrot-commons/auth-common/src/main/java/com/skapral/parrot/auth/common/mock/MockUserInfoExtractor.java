@@ -23,7 +23,7 @@ public class MockUserInfoExtractor implements UserInfoExtractor {
         });
     }
 
-    private Optional<String> getUserInfo(HttpServletRequest request) {
+    private final Optional<String> getUserInfo(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Mock ")) {
             return Optional.of(headerAuth.substring(5));

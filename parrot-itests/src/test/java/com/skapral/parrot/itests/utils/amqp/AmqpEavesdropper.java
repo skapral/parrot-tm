@@ -13,7 +13,7 @@ public class AmqpEavesdropper {
         this.connection = connection;
     }
 
-    public AmqpEavesdroppedState startEavesdropping(String exchangeName, String routingKey) {
+    public final AmqpEavesdroppedState startEavesdropping(String exchangeName, String routingKey) {
         try {
             var channel = connection.createChannel();
             var state = new AmqpEavesdroppedState(channel);

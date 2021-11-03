@@ -12,7 +12,7 @@ import java.io.IOException;
 @Slf4j
 public class AuthEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(
+    public final void commence(
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException e

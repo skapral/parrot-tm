@@ -8,7 +8,7 @@ import java.util.UUID;
 
 class UserRowMapper implements RowMapper<User> {
     @Override
-    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public final User mapRow(ResultSet rs, int rowNum) throws SQLException {
         var user = new User();
         user.setId(rs.getObject("id", UUID.class));
         user.setRole(Role.valueOf(rs.getString("role")));

@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
+import com.pragmaticobjects.oo.equivalence.base.EObjectHint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Slf4j
+@EObjectHint(enabled = false)
 public class JwtUtils {
     @Value("${jwt.secret}")
     private String jwtSecret;
