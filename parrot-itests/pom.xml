@@ -40,6 +40,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.pragmaticobjects.oo.memoized</groupId>
+            <artifactId>memoized-chm</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <scope>test</scope>
