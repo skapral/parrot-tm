@@ -1,4 +1,4 @@
-package com.skapral.parrot.itests.environment;
+package com.skapral.parrot.itests.utils.environment;
 
 import com.pragmaticobjects.oo.memoized.core.MemoizedCallable;
 import com.pragmaticobjects.oo.memoized.core.Memory;
@@ -18,6 +18,11 @@ public class DockerComposeDeployment implements Deployment {
     public DockerComposeDeployment(Memory memory, DockerComposeContainer<?> dockerComposeContainer) {
         this.memory = memory;
         this.dockerComposeContainer = dockerComposeContainer;
+    }
+
+    @Override
+    public final Memory deploymentScopedMemory() {
+        return memory;
     }
 
     @Override

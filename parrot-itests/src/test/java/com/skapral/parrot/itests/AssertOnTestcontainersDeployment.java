@@ -2,8 +2,8 @@ package com.skapral.parrot.itests;
 
 import com.pragmaticobjects.oo.memoized.chm.MemoryCHM;
 import com.pragmaticobjects.oo.tests.Assertion;
-import com.skapral.parrot.itests.environment.Deployment;
-import com.skapral.parrot.itests.environment.DockerComposeDeployment;
+import com.skapral.parrot.itests.utils.environment.Deployment;
+import com.skapral.parrot.itests.utils.environment.DockerComposeDeployment;
 import org.testcontainers.containers.DockerComposeContainer;
 
 import java.util.function.Function;

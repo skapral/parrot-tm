@@ -4,6 +4,7 @@ import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
 import com.skapral.parrot.itests.assertions.business.AssertExpectingNewUserMessage;
 import com.skapral.parrot.itests.assertions.business.UserAuthentication;
+import com.skapral.parrot.itests.utils.authentication.JwtAuthentication;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -33,8 +34,11 @@ public class AuthTest extends TestsSuite {
                     ENVIRONMENT,
                     deployment -> new AssertExpectingNewUserMessage(
                         new UserAuthentication(
-                            deployment.serviceURI("webui", 80),
-                            "testuser"
+                            new JwtAuthentication(
+                                deployment.deploymentScopedMemory(),
+                                deployment.serviceURI("webui", 80),
+                                "testuser"
+                            )
                         ),
                         deployment.amqp("amqp", 5672, "guest", "guest"),
                         "testuser"

@@ -4,6 +4,7 @@ import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
 import com.skapral.parrot.itests.assertions.business.AssertExpectingNewTaskMessage;
 import com.skapral.parrot.itests.assertions.business.TaskCreation;
+import com.skapral.parrot.itests.utils.authentication.FakeAuthentication;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -33,7 +34,7 @@ public class TasksTest extends TestsSuite {
                      deployment -> new AssertExpectingNewTaskMessage(
                          new TaskCreation(
                              deployment.serviceURI("tasks-service", 8080),
-                             "PARROT",
+                             new FakeAuthentication("phantom", "PARROT"),
                              "TestTask"
                          ),
                          deployment.amqp("amqp", 5672, "guest", "guest")
