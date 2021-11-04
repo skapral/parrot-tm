@@ -17,6 +17,6 @@ public class AssertJsonHasFieldWithValue implements Assertion {
 
     @Override
     public final void check() throws Exception {
-        Assertions.assertThat(object).hasFieldOrPropertyWithValue(field, value);
+        Assertions.assertThat(object.get(field)).isEqualTo(value);
     }
 }
