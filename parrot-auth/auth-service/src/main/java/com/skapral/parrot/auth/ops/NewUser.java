@@ -1,6 +1,6 @@
 package com.skapral.parrot.auth.ops;
 
-import com.skapral.parrot.auth.data.Role;
+import com.skapral.parrot.auth.rest.Role;
 import com.skapral.parrot.common.Operation;
 import org.springframework.jdbc.core.JdbcTemplate;
 

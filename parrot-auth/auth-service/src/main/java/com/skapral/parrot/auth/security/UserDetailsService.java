@@ -1,9 +1,9 @@
 package com.skapral.parrot.auth.security;
 
 import com.skapral.parrot.auth.common.RoleAuthority;
-import com.skapral.parrot.auth.data.Role;
-import com.skapral.parrot.auth.data.UserByLogin;
 import com.skapral.parrot.auth.ops.CreateUserIfDoesntExist;
+import com.skapral.parrot.auth.queries.UserByLogin;
+import com.skapral.parrot.auth.rest.Role;
 import io.vavr.collection.List;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;

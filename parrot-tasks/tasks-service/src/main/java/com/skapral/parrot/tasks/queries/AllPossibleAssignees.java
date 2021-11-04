@@ -1,4 +1,4 @@
-package com.skapral.parrot.tasks.data;
+package com.skapral.parrot.tasks.queries;
 
 import com.skapral.parrot.common.Query;
 import io.vavr.collection.List;

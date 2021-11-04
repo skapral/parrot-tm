@@ -4,7 +4,6 @@ package com.skapral.parrot.auth.rest;
 import com.skapral.parrot.auth.common.RoleAuthority;
 import com.skapral.parrot.auth.common.jwt.JwtClaim;
 import com.skapral.parrot.auth.common.jwt.JwtUtils;
-import com.skapral.parrot.auth.data.Role;
 import io.vavr.collection.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

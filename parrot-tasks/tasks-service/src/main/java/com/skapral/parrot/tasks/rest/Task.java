@@ -1,4 +1,4 @@
-package com.skapral.parrot.tasks.data;
+package com.skapral.parrot.tasks.rest;
 
 import com.pragmaticobjects.oo.equivalence.base.EObjectHint;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EObjectHint(enabled = false)
-public class Assignee {
+public class Task {
     private UUID id;
-    private String name;
+    private String description;
+    private Status status;
+    private UUID assigneeId;
+    private String assigneeName;
 }

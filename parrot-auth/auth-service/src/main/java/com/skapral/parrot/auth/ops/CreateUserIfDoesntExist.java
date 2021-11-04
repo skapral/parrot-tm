@@ -1,6 +1,6 @@
 package com.skapral.parrot.auth.ops;
 
-import com.skapral.parrot.auth.data.Role;
+import com.skapral.parrot.auth.rest.Role;
 import com.skapral.parrot.common.DoAndNotify;
 import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.data.User;

@@ -1,7 +1,6 @@
 package com.skapral.parrot.auth.rest;
 
-import com.skapral.parrot.auth.data.User;
-import com.skapral.parrot.auth.data.Users;
+import com.skapral.parrot.auth.queries.Users;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

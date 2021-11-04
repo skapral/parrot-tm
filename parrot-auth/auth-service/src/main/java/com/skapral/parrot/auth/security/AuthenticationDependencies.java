@@ -1,6 +1,6 @@
 package com.skapral.parrot.auth.security;
 
-import com.skapral.parrot.auth.data.Jdbc;
+import com.skapral.parrot.common.data.SpringDataJdbc;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@Import({Jdbc.class})
+@Import({SpringDataJdbc.class})
 public class AuthenticationDependencies {
     private final JdbcTemplate jdbcTemplate;
     private final RabbitTemplate rabbitTemplate;

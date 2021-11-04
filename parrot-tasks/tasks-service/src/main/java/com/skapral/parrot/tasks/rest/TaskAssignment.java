@@ -1,4 +1,4 @@
-package com.skapral.parrot.tasks.data;
+package com.skapral.parrot.tasks.rest;
 
 import com.pragmaticobjects.oo.equivalence.base.EObjectHint;
 import lombok.AllArgsConstructor;

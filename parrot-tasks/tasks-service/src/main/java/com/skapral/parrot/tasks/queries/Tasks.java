@@ -1,6 +1,8 @@
-package com.skapral.parrot.tasks.data;
+package com.skapral.parrot.tasks.queries;
 
 import com.skapral.parrot.common.Query;
+import com.skapral.parrot.tasks.rest.Status;
+import com.skapral.parrot.tasks.rest.Task;
 import io.vavr.collection.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

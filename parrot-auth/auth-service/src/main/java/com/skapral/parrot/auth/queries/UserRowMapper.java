@@ -1,5 +1,7 @@
-package com.skapral.parrot.auth.data;
+package com.skapral.parrot.auth.queries;
 
+import com.skapral.parrot.auth.rest.Role;
+import com.skapral.parrot.auth.rest.User;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
