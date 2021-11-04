@@ -1,19 +1,17 @@
 package com.skapral.parrot.itests.utils.authentication;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.pragmaticobjects.oo.memoized.core.MemoizedCallable;
 import com.pragmaticobjects.oo.memoized.core.Memory;
-import com.pragmaticobjects.oo.tests.AssertCombined;
-import com.skapral.parrot.itests.assertions.http.ResponseHasHeader;
-import com.skapral.parrot.itests.assertions.http.StatusCodeRedirect;
-import io.vavr.collection.List;
-import io.vavr.collection.Traversable;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Optional;
 
-public class JwtAuthentication implements Authentication {
+public class JwtAuthentication implements Authentication<DecodedJWT> {
     private final HttpClient CLIENT = HttpClient.newHttpClient();
     private final Memory memory;
     private final URI authUri;
@@ -26,32 +24,35 @@ public class JwtAuthentication implements Authentication {
     }
 
     @Override
-    public final void authenticate() {
-        authorizationHeader();
+    public final Optional<DecodedJWT> authenticate() {
+        return authorizationHeader();
     }
 
     @Override
     public final HttpRequest.Builder authenticate(HttpRequest.Builder originalRequest) {
-        var authorizationHeaderValue = authorizationHeader();
-        return originalRequest.header("Authorization", authorizationHeaderValue);
+        var jwtTokenOpt = authorizationHeader();
+        if(jwtTokenOpt.isPresent()) {
+            return originalRequest.header("Authorization", "Bearer " + jwtTokenOpt.get().getToken());
+        } else {
+            return originalRequest;
+        }
     }
 
-    private final String authorizationHeader() {
+    private final Optional<DecodedJWT> authorizationHeader() {
         return memory.memoized(
-                new MemoizedCallable<String>() {
+                new MemoizedCallable<>() {
                     @Override
-                    public final String call() {
+                    public final Optional<DecodedJWT> call() {
                         try {
                             var req = HttpRequest.newBuilder()
                                     .POST(HttpRequest.BodyPublishers.noBody())
-                                    .uri(authUri.resolve("/auth/login?login=" + login))
+                                    .uri(authUri.resolve("/login?login=" + login))
                                     .build();
                             var resp = CLIENT.send(req, HttpResponse.BodyHandlers.discarding());
-                            new AssertCombined(
-                                    new StatusCodeRedirect(resp),
-                                    new ResponseHasHeader(resp, "Authorization")
-                            ).check();
-                            return resp.headers().firstValue("Authorization").get();
+                            var auth=  resp.headers().firstValue("Authorization")
+                                    .map(s -> s.replace("Bearer ", ""))
+                                    .map(JWT::decode);
+                            return auth;
                         } catch(Exception ex) {
                             throw new RuntimeException(ex);
                         }

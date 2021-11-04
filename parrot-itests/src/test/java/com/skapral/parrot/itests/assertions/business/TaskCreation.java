@@ -8,11 +8,11 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 
 public class TaskCreation extends AssertHttp {
-    public TaskCreation(URI uri, Authentication auth, String description) {
+    public TaskCreation(URI uri, Authentication<?> auth, String description) {
         super(
                 cli -> auth.authenticate(HttpRequest.newBuilder())
                         .POST(HttpRequest.BodyPublishers.noBody())
-                        .uri(uri.resolve("/?description=TestTask"))
+                        .uri(uri.resolve("/?description=" + description))
                         .build(),
                 resp -> new StatusCode2XX(resp)
         );

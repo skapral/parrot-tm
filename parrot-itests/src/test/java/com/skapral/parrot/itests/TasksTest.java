@@ -11,10 +11,11 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.File;
+import java.util.function.Supplier;
 
 public class TasksTest extends TestsSuite {
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static DockerComposeContainer ENVIRONMENT = new DockerComposeContainer(new File("target/test-classes/docker-compose.yml"))
+
+    public static Supplier<DockerComposeContainer<?>> ENVIRONMENT = () -> new DockerComposeContainer<>(new File("target/test-classes/docker-compose.yml"))
             .withEnv("TEST_ENVIRONMENT", "true")
             .withServices("postgres", "amqp", "tasks-service")
             .withExposedService("amqp", 5672)

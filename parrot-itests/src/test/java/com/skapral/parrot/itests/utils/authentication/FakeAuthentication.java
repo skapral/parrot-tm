@@ -1,8 +1,9 @@
 package com.skapral.parrot.itests.utils.authentication;
 
 import java.net.http.HttpRequest;
+import java.util.Optional;
 
-public class FakeAuthentication implements Authentication {
+public class FakeAuthentication implements Authentication<Object> {
     private final String login;
     private final String role;
 
@@ -12,8 +13,9 @@ public class FakeAuthentication implements Authentication {
     }
 
     @Override
-    public final void authenticate() {
+    public final Optional<Object> authenticate() {
         // Do nothing
+        return Optional.of(this);
     }
 
     @Override

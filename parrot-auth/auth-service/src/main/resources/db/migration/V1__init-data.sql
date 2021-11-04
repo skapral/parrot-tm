@@ -5,5 +5,4 @@ create table if not exists "user"
     role varchar(16)
 );
 
-insert into "user" (login, role) values ('innokentiy', 'MANAGER');
-insert into "user" (login, role) values ('jorik', 'ADMIN');
+insert into "user" (login, role) values ('admin', 'ADMIN');
