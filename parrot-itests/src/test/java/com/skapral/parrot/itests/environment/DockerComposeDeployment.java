@@ -2,8 +2,10 @@ package com.skapral.parrot.itests.environment;
 
 import com.pragmaticobjects.oo.memoized.core.MemoizedCallable;
 import com.pragmaticobjects.oo.memoized.core.Memory;
+import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import com.skapral.parrot.itests.utils.amqp.AmqpEavesdropper;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.testcontainers.containers.DockerComposeContainer;
 
 import javax.sql.DataSource;
@@ -27,15 +29,28 @@ public class DockerComposeDeployment implements Deployment {
 
     @Override
     public final DataSource datasource(String serviceName, int servicePort, String dbName, String user, String password) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final AmqpEavesdropper amqp(String serviceName, int servicePort, String user, String password) {
         return memory.memoized(
             new MemoizedCallable<>() {
                 @Override
-                public final AmqpEavesdropper call() {
+                public final DataSource call() {
+                    var host = dockerComposeContainer.getServiceHost(serviceName, servicePort);
+                    var port = dockerComposeContainer.getServicePort(serviceName, servicePort);
+                    var jdbcUrl = String.format("jdbc:postgresql://%s:%s/%s?user=%s&password=%s", host, port, dbName, user, password);
+                    var config = new HikariConfig();
+                    config.setJdbcUrl(jdbcUrl);
+                    config.setDriverClassName("org.postgresql.Driver");
+                    return new HikariDataSource(config);
+                }
+            }
+        );
+    }
+
+    @Override
+    public final Connection amqp(String serviceName, int servicePort, String user, String password) {
+        return memory.memoized(
+            new MemoizedCallable<>() {
+                @Override
+                public final Connection call() {
                     try {
                         var host = dockerComposeContainer.getServiceHost(serviceName, servicePort);
                         var port = dockerComposeContainer.getServicePort(serviceName, servicePort);
@@ -45,8 +60,8 @@ public class DockerComposeDeployment implements Deployment {
                         amqpFactory.setUsername(user);
                         amqpFactory.setPassword(password);
                         var connection = amqpFactory.newConnection();
-                        return new AmqpEavesdropper(connection);
-                    } catch(Exception ex) {
+                        return connection;
+                    } catch (Exception ex) {
                         throw new RuntimeException(ex);
                     }
                 }

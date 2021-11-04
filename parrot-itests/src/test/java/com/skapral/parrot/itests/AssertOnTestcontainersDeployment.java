@@ -8,11 +8,11 @@ import org.testcontainers.containers.DockerComposeContainer;
 
 import java.util.function.Function;
 
-public class AssertAssumingDockerCompose implements Assertion {
+public class AssertOnTestcontainersDeployment implements Assertion {
     private final DockerComposeContainer<?> dockerComposeContainer;
     private final Function<Deployment, Assertion> assertionOnDeployment;
 
-    public AssertAssumingDockerCompose(DockerComposeContainer<?> dockerComposeContainer, Function<Deployment, Assertion> assertionOnDeployment) {
+    public AssertOnTestcontainersDeployment(DockerComposeContainer<?> dockerComposeContainer, Function<Deployment, Assertion> assertionOnDeployment) {
         this.dockerComposeContainer = dockerComposeContainer;
         this.assertionOnDeployment = assertionOnDeployment;
     }

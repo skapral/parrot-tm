@@ -1,19 +1,15 @@
 package com.skapral.parrot.itests;
 
-import com.pragmaticobjects.oo.tests.AssertPass;
 import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
-import org.assertj.core.api.Assertions;
+import com.skapral.parrot.itests.assertions.business.AssertExpectingNewTaskMessage;
+import com.skapral.parrot.itests.assertions.business.TaskCreation;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.File;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 public class TasksTest extends TestsSuite {
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -32,31 +28,16 @@ public class TasksTest extends TestsSuite {
         super(
              new TestCase(
                  "user creates new task",
-                 new AssertAssumingDockerCompose(
+                 new AssertOnTestcontainersDeployment(
                      ENVIRONMENT,
-                     (deployment) -> {
-                         var tasksServiceUri = deployment.serviceURI("tasks-service", 8080);
-                         var amqp = deployment.amqp("amqp", 5672, "guest", "guest");
-                         try (var amqpState = amqp.startEavesdropping("outbox", "")) {
-                             var client = HttpClient.newHttpClient();
-                             var req = HttpRequest.newBuilder()
-                                     .POST(HttpRequest.BodyPublishers.noBody())
-                                     .header("Authorization", "Mock testuser:PARROT")
-                                     .uri(tasksServiceUri.resolve("/?description=TestTask"))
-                                     .build();
-                             var resp = client.send(req, HttpResponse.BodyHandlers.ofString());
-
-                             Assertions.assertThat(resp.statusCode()).isEqualTo(200);
-
-                             amqpState.assertOnMessages(messages -> {
-                                 var newTaskMessages = messages.filter(m -> m.getProperties().getType().equals("TASK_NEW"));
-                                 Assertions.assertThat(newTaskMessages).hasSize(1);
-                             }, Duration.ofMinutes(1));
-                         } catch(Exception ex) {
-                             throw new RuntimeException(ex);
-                         }
-                         return new AssertPass();
-                     }
+                     deployment -> new AssertExpectingNewTaskMessage(
+                         new TaskCreation(
+                             deployment.serviceURI("tasks-service", 8080),
+                             "PARROT",
+                             "TestTask"
+                         ),
+                         deployment.amqp("amqp", 5672, "guest", "guest")
+                     )
                  )
              )
         );
