@@ -75,8 +75,7 @@ public class AuthRest {
                 )
         );
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", "/");
         headers.add("Authorization", "Bearer " + jwtToken);
-        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 }
