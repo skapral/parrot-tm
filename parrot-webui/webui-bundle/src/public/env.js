@@ -38,7 +38,7 @@ window.env = {
   "VTE_VERSION": "6203",
   "WAYLAND_DISPLAY": "wayland-0",
   "SDKMAN_VERSION": "5.12.4",
-  "GNOME_TERMINAL_SCREEN": "/org/gnome/Terminal/screen/1a96ad23_6779_4751_a17a_d78b189dd258",
+  "GNOME_TERMINAL_SCREEN": "/org/gnome/Terminal/screen/3feead2f_abd5_491b_a2e1_52ded0c40c64",
   "INIT_CWD": "/home/skapral/GitHub/parrot-tm/parrot-webui/webui-bundle/src",
   "npm_lifecycle_script": "react-dotenv && react-scripts start",
   "MOZ_GMP_PATH": "/usr/lib64/mozilla/plugins/gmp-gmpopenh264/system-installed",
@@ -74,5 +74,6 @@ window.env = {
   "MAIL": "/var/spool/mail/skapral",
   "npm_node_execpath": "/usr/bin/node",
   "LC_NUMERIC": "ru_RU.UTF-8",
+  "OLDPWD": "/home/skapral/GitHub/parrot-tm/parrot-webui",
   "API_URL": "http://localhost:80"
 };

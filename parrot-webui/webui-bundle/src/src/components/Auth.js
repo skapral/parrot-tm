@@ -1,24 +1,28 @@
 import React from 'react';
 import env from "react-dotenv";
 
-function Login(props) {
+function Auth(props) {
+    console.log("props", props);
+
     let login;
 
-    function handleSubmit() {
-        fetch(env.API_URL + "/auth/login?login=" + login, {
+    function handleSubmit(event) {
+        event.preventDefault();
+        fetch("/auth/login?login=" + login, {
             method: 'POST'
-        }).catch(r => console.log(r))
+        })
             .then(r => r.headers.get("Authorization"))
-            .then(auth => console.log("Authorization = " + auth));
-
+            .then(auth => { console.log("Authorization = " + auth); return auth; })
+            .then(auth => props.onAuthorized(auth));
     }
 
     function handleChange(event) {
+        console.log("handleChange", event.target.value)
         login = event.target.value;
     }
 
     return (
-        <form action={env.API_URL + "/auth/login"} method="POST">
+        <form onSubmit={handleSubmit}>
             <label>
                 Имя: <input type="text" name="login" value={login} onChange={handleChange}/>
             </label>
@@ -27,4 +31,4 @@ function Login(props) {
     );
 }
 
-export default Login;
+export default Auth;
