@@ -5,7 +5,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>target/static</directory>
+            <directory>build</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
     </fileSets>

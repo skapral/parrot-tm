@@ -1,5 +1,4 @@
 import React from 'react';
-import env from "react-dotenv";
 
 function Auth(props) {
     console.log("props", props);
