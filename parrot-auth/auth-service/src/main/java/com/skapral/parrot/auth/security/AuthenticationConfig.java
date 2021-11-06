@@ -54,7 +54,7 @@ public class AuthenticationConfig extends com.skapral.parrot.auth.common.securit
         super.configure(http);
         http.authorizeRequests()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/registration").permitAll()
+                .antMatchers("/register").hasAnyAuthority("ADMIN")
                 .anyRequest().authenticated().and();
     }
 }

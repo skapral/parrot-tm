@@ -1,6 +1,7 @@
 package com.skapral.parrot.itests.assertions.http;
 
 import com.pragmaticobjects.oo.tests.Assertion;
+import com.skapral.parrot.itests.assertions.http.endpoints.Endpoint;
 import org.apache.commons.compress.archivers.sevenz.CLI;
 
 import java.net.http.HttpClient;
@@ -16,6 +17,13 @@ public class AssertHttp implements Assertion {
     public AssertHttp(Function<HttpClient, HttpRequest> request, Function<HttpResponse<String>, Assertion> responseAssertion) {
         this.request = request;
         this.responseAssertion = responseAssertion;
+    }
+
+    public AssertHttp(Endpoint endpoint, Function<HttpResponse<String>, Assertion> responseAssertion) {
+        this(
+                cli -> endpoint.request(),
+                responseAssertion
+        );
     }
 
     @Override
