@@ -22,7 +22,7 @@ public class JwtUserInfoExtractor implements UserInfoExtractor {
                 .filter(jwtUtils::validateJwtToken)
                 .map(jwt -> {
                     log.info("JWT {}", jwt);
-                    String user = jwtUtils.getUserNameFromJwtToken(jwt);
+                    String user = jwtUtils.getSubjectFromJwtToken(jwt);
                     String role = jwtUtils.getClaimFromJwtToken(jwt, "role").asString();
                     return new UserInfo(user, role);
                 });

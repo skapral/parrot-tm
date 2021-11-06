@@ -2,6 +2,7 @@ package com.skapral.parrot.itests;
 
 import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
+import com.skapral.parrot.itests.assertions.business.AssertCurrentUser;
 import com.skapral.parrot.itests.assertions.business.AssertExpectingNewUserMessage;
 import com.skapral.parrot.itests.assertions.business.UserAuthentication;
 import com.skapral.parrot.itests.assertions.jdbc.AssertAssumingDbState;
@@ -40,7 +41,7 @@ public class AuthTest extends TestsSuite {
     public AuthTest() {
         super(
             new TestCase(
-                "new user automatically registers itself as a parrot",
+                "new user automatically registers itself",
                 new AssertOnTestcontainersDeployment(
                     ENVIRONMENT,
                     deployment -> new AssertExpectingNewUserMessage(
@@ -72,6 +73,22 @@ public class AuthTest extends TestsSuite {
                             "role",
                             "MANAGER"
                         )
+                    )
+                )
+            ),
+            new TestCase(
+                "Getting currently logged in user info",
+                new AssertOnTestcontainersDeployment(
+                    ENVIRONMENT,
+                    deployment -> new AssertCurrentUser(
+                        new JwtAuthentication(
+                            deployment.deploymentScopedMemory(),
+                            deployment.serviceURI("auth-service", 8080),
+                            "testuser"
+                        ),
+                        deployment.serviceURI("auth-service", 8080),
+                        "testuser",
+                        "PARROT"
                     )
                 )
             )

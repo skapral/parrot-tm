@@ -36,7 +36,7 @@ public class JwtUtils {
         return jwtBuilder.sign(Algorithm.HMAC256(jwtSecret));
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String getSubjectFromJwtToken(String token) {
         return JWT.decode(token).getSubject();
     }
 
