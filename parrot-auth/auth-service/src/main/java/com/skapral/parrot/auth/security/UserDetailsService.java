@@ -16,24 +16,13 @@ import java.util.UUID;
 
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
     private final JdbcTemplate jdbcTemplate;
-    private final RabbitTemplate rabbitTemplate;
 
-    public UserDetailsService(JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate) {
+    public UserDetailsService(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        var op = new CreateUserIfDoesntExist(
-                jdbcTemplate,
-                rabbitTemplate,
-                UUID.randomUUID(),
-                login,
-                Role.PARROT
-        );
-        op.execute();
-
         return new UserByLogin(jdbcTemplate, login)
                 .get()
                 .map(user ->  new User(user.getId().toString(), "", List.of(new RoleAuthority(user.getRole().name())).asJava()))

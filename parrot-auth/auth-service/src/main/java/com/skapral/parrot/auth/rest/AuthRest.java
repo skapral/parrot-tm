@@ -4,9 +4,11 @@ package com.skapral.parrot.auth.rest;
 import com.skapral.parrot.auth.common.RoleAuthority;
 import com.skapral.parrot.auth.common.jwt.JwtClaim;
 import com.skapral.parrot.auth.common.jwt.JwtUtils;
+import com.skapral.parrot.auth.ops.CreateUserIfDoesntExist;
 import com.skapral.parrot.auth.queries.UserById;
 import io.vavr.collection.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -48,13 +47,28 @@ class RolesClaim implements JwtClaim {
 public class AuthRest {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final JdbcTemplate template;
+    private final JdbcTemplate jdbcTemplate;
+    private final RabbitTemplate rabbittemplate;
 
     @Autowired
-    public AuthRest(AuthenticationManager authenticationManager, JwtUtils jwtUtils, JdbcTemplate template) {
+    public AuthRest(AuthenticationManager authenticationManager, JwtUtils jwtUtils, JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
-        this.template = template;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rabbittemplate = rabbitTemplate;
+    }
+
+    @PostMapping(value = "register", consumes = "application/json")
+    public void register(@RequestBody UserCreation userCreation) {
+        log.info("login = " + userCreation.getLogin());
+        log.info("role = " + userCreation.getRole());
+        new CreateUserIfDoesntExist(
+            jdbcTemplate,
+            rabbittemplate,
+            UUID.randomUUID(),
+            userCreation.getLogin(),
+            userCreation.getRole()
+        ).execute();
     }
 
     @PostMapping("login")
@@ -92,7 +106,7 @@ public class AuthRest {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         log.info(auth.getName());
         return new UserById(
-                template,
+                jdbcTemplate,
                 UUID.fromString(auth.getName())
         ).get().get();
     }

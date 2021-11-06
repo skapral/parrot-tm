@@ -14,17 +14,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Import({SpringDataJdbc.class})
 public class AuthenticationDependencies {
     private final JdbcTemplate jdbcTemplate;
-    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public AuthenticationDependencies(JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate) {
+    public AuthenticationDependencies(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new com.skapral.parrot.auth.security.UserDetailsService(jdbcTemplate, rabbitTemplate);
+        return new com.skapral.parrot.auth.security.UserDetailsService(jdbcTemplate);
     }
 
     @Bean

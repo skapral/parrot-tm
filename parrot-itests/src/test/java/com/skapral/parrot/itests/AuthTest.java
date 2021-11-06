@@ -1,12 +1,12 @@
 package com.skapral.parrot.itests;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
-import com.skapral.parrot.itests.assertions.business.AssertCurrentUser;
-import com.skapral.parrot.itests.assertions.business.AssertExpectingNewUserMessage;
-import com.skapral.parrot.itests.assertions.business.UserAuthentication;
+import com.skapral.parrot.itests.assertions.business.*;
 import com.skapral.parrot.itests.assertions.jdbc.AssertAssumingDbState;
 import com.skapral.parrot.itests.assertions.jwt.AssertJwtHasClaim;
+import com.skapral.parrot.itests.utils.authentication.EldrichJwtTokenAuthorization;
 import com.skapral.parrot.itests.utils.authentication.JwtAuthentication;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
@@ -20,6 +20,8 @@ import java.util.function.Supplier;
 
 public class AuthTest extends TestsSuite {
     private static final String TEST_USERS_SQL;
+
+
 
     private static final Supplier<DockerComposeContainer<?>> ENVIRONMENT = () -> new DockerComposeContainer<>(new File("target/test-classes/docker-compose.yml"))
                     .withServices("postgres", "amqp", "auth-service")
@@ -41,16 +43,19 @@ public class AuthTest extends TestsSuite {
     public AuthTest() {
         super(
             new TestCase(
-                "new user automatically registers itself",
+                "registering new user",
                 new AssertOnTestcontainersDeployment(
                     ENVIRONMENT,
                     deployment -> new AssertExpectingNewUserMessage(
-                        new UserAuthentication(
+                        new UserRegistration(
                             new JwtAuthentication(
                                 deployment.deploymentScopedMemory(),
                                 deployment.serviceURI("auth-service", 8080),
-                                "testuser"
-                            )
+                                "admin"
+                            ),
+                            deployment.serviceURI("auth-service", 8080),
+                            "testuser",
+                            "PARROT"
                         ),
                         deployment.amqp("amqp", 5672, "guest", "guest"),
                         "testuser"
@@ -84,11 +89,25 @@ public class AuthTest extends TestsSuite {
                         new JwtAuthentication(
                             deployment.deploymentScopedMemory(),
                             deployment.serviceURI("auth-service", 8080),
-                            "testuser"
+                            "admin"
                         ),
                         deployment.serviceURI("auth-service", 8080),
-                        "testuser",
-                        "PARROT"
+                        "admin",
+                        "ADMIN"
+                    )
+                )
+            ),
+            new TestCase(
+                "token expires gracefully",
+                new AssertOnTestcontainersDeployment(
+                    ENVIRONMENT,
+                    deployment -> new AssertAuthenticationFailure(
+                        new EldrichJwtTokenAuthorization(
+                                "testuser",
+                                "PARROT",
+                                Algorithm.HMAC256("parrot") // default secret
+                        ),
+                        deployment.serviceURI("auth-service", 8080).resolve("/current")
                     )
                 )
             )
