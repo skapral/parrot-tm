@@ -36,13 +36,13 @@
         <dependency>
             <groupId>com.pragmaticobjects.oo.tests</groupId>
             <artifactId>tests-junit5</artifactId>
-            <version>0.0.0-SNAPSHOT</version>
+            <version>0.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.pragmaticobjects.oo.memoized</groupId>
             <artifactId>memoized-chm</artifactId>
-            <version>0.0.0-SNAPSHOT</version>
+            <version>0.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

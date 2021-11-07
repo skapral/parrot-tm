@@ -27,7 +27,7 @@
                 <dependency>
                     <groupId>com.pragmaticobjects.oo.equivalence</groupId>
                     <artifactId>equivalence-base</artifactId>
-                    <version>0.0.0-SNAPSHOT</version>
+                    <version>0.1.0</version>
                 </dependency>
             </dependencies>
             <build>
@@ -35,7 +35,7 @@
                     <plugin>
                         <groupId>com.pragmaticobjects.oo.equivalence</groupId>
                         <artifactId>equivalence-maven-plugin</artifactId>
-                        <version>0.0.0-SNAPSHOT</version>
+                        <version>0.1.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -58,6 +58,7 @@
                     <plugin>
                         <groupId>fr.brouillard.oss</groupId>
                         <artifactId>jgitver-maven-plugin</artifactId>
+                        <version>1.7.1</version>
                         <executions>
                             <execution>
                                 <phase>prepare-package</phase>
