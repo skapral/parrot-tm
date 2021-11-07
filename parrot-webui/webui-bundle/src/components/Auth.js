@@ -10,9 +10,17 @@ function Auth(props) {
         fetch("/auth/login?login=" + login, {
             method: 'POST'
         })
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response;
+            })
             .then(r => r.headers.get("Authorization"))
             .then(auth => { console.log("Authorization = " + auth); return auth; })
-            .then(auth => props.onAuthorized(auth));
+            .then(auth => { localStorage.setItem('jwt', auth); return auth; })
+            .catch(r => { localStorage.removeItem('jwt'); })
+            .finally(() => props.onAuthorized());
     }
 
     function handleChange(event) {

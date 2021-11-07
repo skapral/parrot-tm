@@ -7,7 +7,6 @@ import Account from "./components/Account";
 import Auth from "./components/Auth"
 import Login from "./components/Login"
 
-
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -18,10 +17,28 @@ class App extends React.Component {
         this.handleAuthorization = this.handleAuthorization.bind(this);
     }
 
-    handleAuthorization(auth) {
+    handleAuthorization() {
         console.log("handle authorization");
-        console.log("authEvent", auth);
-        this.setState({authorization: auth});
+        fetch("/auth/current", {
+            headers: {
+                Authorization: localStorage.getItem("jwt")
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject(response);
+                }
+                return response;
+            })
+            .then(r => {
+                let b = r.json().then(b => {
+                    console.log("b", b);
+                    this.setState({authorization: b.login + " " + b.role});
+                });
+            })
+            .catch(r => {
+                this.setState({authorization: null});
+            });
     }
 
     updateDashboard(component) {
