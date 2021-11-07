@@ -53,7 +53,7 @@ Consists of some Maven modules, shared between the services.
 
 ### [Authentication service](parrot-auth)
 
-Authentication subsystem, responcible for managing users, their roles, authenticating them into the system and issuing JWT tokens.
+Authentication subsystem, responsible for managing users, their roles, authenticating them into the system and issuing JWT tokens.
 
 ### [Tasks service](parrot-tasks)
 
@@ -81,18 +81,20 @@ A set of integration tests for the system.
 
 ## Authentication/Authorization
 
-Authentication and authorization are implemented in [auth-common](parrot-commons/auth-common) as two Spring Security configurations.
-The module is shared among the services as a usual Jar dependency.
-
 Authentication is done by means of JWT tokens. The side that issues the tokens is `auth-service`. Tokens secret and expiration times are provided
-by means of Spring Configs, with default values of "parrot" and "1 day" correspondingly. Configuration for authentication is located
-here: `com.skapral.parrot.auth.common.security.AuthenticationConfig`
-
+by means of Spring Configs, with default values of "parrot" and "1 day" correspondingly.
+JWT secret is shared among the services in the system, allowing them to authorize incoming requests by validating and parsing the token, issued by `auth-service`.
 JWT token uses the user's UUID as a token's subject. Also, JWT token has "roles" claim, with user roles inside.
 
-Authorization config is `com.skapral.parrot.auth.common.security.SecurityConfig`. It is imported by all the services. It is
-assumed, that all services will share common secret, and therefore will be able to authorize incoming requests using the token, issued by `auth-service`.
+Authentication and authorization are implemented in [auth-common](parrot-commons/auth-common) module as two Spring Security configurations.
+The module is shared among the services as a usual Jar dependency. It contains two configurations:
+
+- `com.skapral.parrot.auth.common.security.AuthenticationConfig` is used by `auth-service` and provides means for issuing JWT token in response to correctly provided
+user credentials.
+-`com.skapral.parrot.auth.common.security.SecurityConfig` is used by all the services, including `auth-service`. It is used for validating that the client has access and authority to call
+HTTP endpoints of the service.
  
-For the purpose of integration testing of each service in isolation from the other system, added capability of mocking authorization. When the service is 
-started with environment variable `TEST_ENVIRONMENT=true`, service accepts `Authorization` header in special format: `Mock <subject>:<role>`, allowing integration
-tests to call service API from perspective of certain user and role, bypassing JWT token issuing. 
+For the purpose of integration testing of each service in isolation from the other system, added capability of mocked auth. When the service is 
+started with environment variable `TEST_ENVIRONMENT=true`, service starts accepting `Authorization` header in special format: `Mock <subject>:<role>`, allowing integration
+tests to call service API from perspective of certain user and role, bypassing JWT token issuing. Usual auth by means of JWT tokens works as well, but requests
+without any authorization is prohibited even in testing mode.
