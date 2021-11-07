@@ -3,7 +3,6 @@ import jwtDecode from 'jwt-decode';
 const decoder = new TextDecoder();
 
 function Login(props) {
-    console.log("LOGIN", props);
     let auth = props.authorization;
     if(!!auth) {
         return <p>Залогинен {auth}</p>
