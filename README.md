@@ -95,4 +95,4 @@ assumed, that all services will share common secret, and therefore will be able 
  
 For the purpose of integration testing of each service in isolation from the other system, added capability of mocking authorization. When the service is 
 started with environment variable `TEST_ENVIRONMENT=true`, service accepts `Authorization` header in special format: `Mock <subject>:<role>`, allowing integration
-tests to call service API from perspective of certain user and role. 
+tests to call service API from perspective of certain user and role, bypassing JWT token issuing. 
