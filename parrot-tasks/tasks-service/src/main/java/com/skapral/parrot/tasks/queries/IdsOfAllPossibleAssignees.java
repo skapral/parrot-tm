@@ -6,10 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.UUID;
 
-public class AllPossibleAssignees implements Query<List<UUID>> {
+public class IdsOfAllPossibleAssignees implements Query<List<UUID>> {
     private final JdbcTemplate template;
 
-    public AllPossibleAssignees(JdbcTemplate template) {
+    public IdsOfAllPossibleAssignees(JdbcTemplate template) {
         this.template = template;
     }
 

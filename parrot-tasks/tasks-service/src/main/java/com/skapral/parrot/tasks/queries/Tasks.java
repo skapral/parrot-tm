@@ -17,7 +17,7 @@ class TaskRowMapper implements RowMapper<Task> {
         var task = new Task();
         task.setId(rs.getObject("id", UUID.class));
         task.setDescription(rs.getString("description"));
-        task.setStatus(rs.getObject("status", Status.class));
+        task.setStatus(Status.valueOf(rs.getObject("status", String.class)));
         task.setAssigneeId(rs.getObject("assigneeId", UUID.class));
         task.setAssigneeName(rs.getString("assigneeName"));
         return task;
@@ -33,6 +33,8 @@ public class Tasks implements Query<List<Task>> {
 
     @Override
     public final List<Task> get() {
-        return List.ofAll(template.queryForList("select task.id as id, task.description as description, task.assignee as assigneeId, assignee.name as assigneeName, status from task left join assignee on (task.assignee = assignee.id);", Task.class));
+        return List.ofAll(
+            template.query("select task.id as id, task.description as description, task.assignee as assigneeId, assignee.name as assigneeName, status from task left join assignee on (task.assignee = assignee.id);", new TaskRowMapper())
+        );
     }
 }

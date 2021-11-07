@@ -6,10 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.UUID;
 
-public class TasksInProgress implements Query<List<UUID>> {
+public class IdsOfTasksInProgress implements Query<List<UUID>> {
     private final JdbcTemplate template;
 
-    public TasksInProgress(JdbcTemplate template) {
+    public IdsOfTasksInProgress(JdbcTemplate template) {
         this.template = template;
     }
 

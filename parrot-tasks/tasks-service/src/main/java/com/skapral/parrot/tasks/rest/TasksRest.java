@@ -7,10 +7,11 @@ import com.skapral.parrot.common.events.impl.RabbitEvent;
 import com.skapral.parrot.tasks.ops.CompleteTask;
 import com.skapral.parrot.tasks.ops.CreateTask;
 import com.skapral.parrot.tasks.ops.DoTaskAssignments;
-import com.skapral.parrot.tasks.queries.AllPossibleAssignees;
+import com.skapral.parrot.tasks.queries.IdsOfAllPossibleAssignees;
 import com.skapral.parrot.tasks.queries.RandomTasksAssignments;
 import com.skapral.parrot.tasks.queries.Tasks;
-import com.skapral.parrot.tasks.queries.TasksInProgress;
+import com.skapral.parrot.tasks.queries.IdsOfTasksInProgress;
+import io.vavr.collection.List;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -78,10 +79,10 @@ public class TasksRest {
 
     @PostMapping("assign")
     public void assign() {
-        var taskIds = new TasksInProgress(jdbcTemplate).get();
+        var taskIds = new IdsOfTasksInProgress(jdbcTemplate).get();
         var taskAssignments = new RandomTasksAssignments(
                 taskIds,
-                new AllPossibleAssignees(jdbcTemplate).get(),
+                new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
                 random
         ).get();
         new DoAndNotify(
