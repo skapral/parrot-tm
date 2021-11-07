@@ -51,19 +51,19 @@ Some complementay service-unrelated docker images, necessary for the system oper
 
 Consists of some Maven modules, shared between the services.
 
-### [Parrot auth](parrot-auth)
+### [Authentication service](parrot-auth)
 
 Authentication subsystem, responcible for managing users, their roles, authenticating them into the system and issuing JWT tokens.
 
-### [Parrot tasks](parrot-tasks)
+### [Tasks service](parrot-tasks)
 
 The service, responcible for managing the tasks, their status and assignments
 
-### [Parrot accounting](parrot-accounting)
+### [Accounting service](parrot-accounting)
 
 TODO: billing and accounting service
 
-### [Parrot analytics](parrot-analytics)
+### [Analytics service](parrot-analytics)
 
 TODO: analytics service
 
@@ -75,3 +75,21 @@ Frontend component of the system, contains all static HTML/CSS/JS resources, plu
 
 A set of integration tests for the system.
 
+## Architecture
+
+![PlantUML diagramm](https://www.planttext.com/api/plantuml/img/LL1B2eCm5Dpd5C5zF868oKO4BMt9ejlN6AoeIKcU5M_V14N8QWRcypwLHt2uBZCXeD0wUWVdB1AYxFArHXkasG2eDzWpMXItkhczofA2ftNYWHK_p6lt6vNEeimJ6S5FFj5b6bVAhWOJXqWT1kOTHvMsj8bdqTx3eDdRsKcxkE-J2z78xd6it8NAupxAUhiPLiOhQie2uIVA4yM9OGAdHPwNCIql9YxMNenKslJXbNy0)
+
+## Authentication/Authorization
+
+Authentication and authorization are implemented in [auth-common](parrot-commons/auth-common) as two Spring Security configurations.
+The module is shared among the services as a usual Jar dependency.
+
+Authentication is done by means of JWT tokens. The side that issues the tokens is `auth-service`. Tokens secret and expiration times are provided
+by means of Spring Configs, with default values of "parrot" and "1 day" correspondingly. Configuration for authentication is located
+here: `com.skapral.parrot.auth.common.security.AuthenticationConfig`
+
+JWT token uses the user's UUID as a token's subject. Also, JWT token has "roles" claim, with user roles inside.
+
+Authorization config is `com.skapral.parrot.auth.common.security.SecurityConfig`. It is imported by all the services. It is
+assumed, that all services will share common secret, and therefore will be able to authorize incoming requests using the token, issued by `auth-service`.
+ 
