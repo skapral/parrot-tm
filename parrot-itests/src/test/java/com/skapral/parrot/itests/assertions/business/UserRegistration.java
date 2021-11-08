@@ -10,7 +10,7 @@ import java.net.URI;
 public class UserRegistration extends AssertHttp {
     public UserRegistration(Authentication<?> auth, URI authUri, String userName, String userRole) {
         super(
-            cli -> new RegisterUser(auth, authUri, userName, userRole).request(),
+            new RegisterUser(auth, authUri, userName, userRole),
             resp -> new StatusCode2XX(resp)
         );
     }

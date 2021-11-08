@@ -20,6 +20,9 @@ public class RandomTasksAssignments implements Query<List<TaskAssignment>> {
 
     @Override
     public final List<TaskAssignment> get() {
+        if(assigneeIds.isEmpty()) {
+            return List.empty();
+        }
         return taskIds.map(t -> Tuple.of(t, assigneeIds.get(random.nextInt(assigneeIds.size()))))
                 .map(tpl -> {
                     var taskId = tpl._1;

@@ -15,6 +15,6 @@ public class IdsOfAllPossibleAssignees implements Query<List<UUID>> {
 
     @Override
     public final List<UUID> get() {
-        return List.ofAll(template.queryForList("SELECT id FROM assignees", UUID.class));
+        return List.ofAll(template.queryForList("SELECT id FROM assignee", UUID.class));
     }
 }
