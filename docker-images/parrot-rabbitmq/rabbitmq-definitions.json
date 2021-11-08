@@ -38,24 +38,43 @@
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
-      "arguments": {}
+      "arguments": {
+        "x-dead-letter-exchange": "dlx",
+        "x-dead-letter-routing-key": "dead"
+      }
     },
     {
       "name": "accounting-service",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
-      "arguments": {}
+      "arguments": {
+        "x-dead-letter-exchange": "dlx",
+        "x-dead-letter-routing-key": "dead"
+      }
     },
     {
       "name": "analytics-service",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
-      "arguments": {}
+      "arguments": {
+        "x-dead-letter-exchange": "dlx",
+        "x-dead-letter-routing-key": "dead"
+      }
     },
     {
       "name": "tasks-service",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "dlx",
+        "x-dead-letter-routing-key": "dead"
+      }
+    },
+    {
+      "name": "dlq",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
@@ -65,6 +84,15 @@
   "exchanges": [
     {
       "name": "outbox",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "dlx",
       "vhost": "/",
       "type": "direct",
       "durable": true,
@@ -104,6 +132,14 @@
       "destination": "tasks-service",
       "destination_type": "queue",
       "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "dlx",
+      "vhost": "/",
+      "destination": "dlq",
+      "destination_type": "queue",
+      "routing_key": "dead",
       "arguments": {}
     }
   ]
