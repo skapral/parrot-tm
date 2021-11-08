@@ -3,6 +3,7 @@ import './App.css';
 
 import React from 'react';
 import Tasks from "./components/Tasks";
+import Users from "./components/Users";
 import Account from "./components/Account";
 import Auth from "./components/Auth"
 import Login from "./components/Login"
@@ -23,22 +24,21 @@ class App extends React.Component {
             headers: {
                 Authorization: localStorage.getItem("jwt")
             }
+        }).then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response;
         })
-            .then(response => {
-                if (!response.ok) {
-                    return Promise.reject(response);
-                }
-                return response;
-            })
-            .then(r => {
-                let b = r.json().then(b => {
-                    console.log("b", b);
-                    this.setState({authorization: b.login + " " + b.role});
-                });
-            })
-            .catch(r => {
-                this.setState({authorization: null});
+        .then(r => {
+            let b = r.json().then(b => {
+                console.log("b", b);
+                this.setState({authorization: b.login + " " + b.role});
             });
+        })
+        .catch(r => {
+            this.setState({authorization: null});
+        });
     }
 
     updateDashboard(component) {
@@ -55,6 +55,7 @@ class App extends React.Component {
                 <div>Попка кросавчег :)</div>
                 <ul>
                     <li><button onClick={() => this.updateDashboard(<Auth onAuthorized={this.handleAuthorization}/>)}>Авторизация</button></li>
+                    <li><button onClick={() => this.updateDashboard(<Users/>)}>Пользователи</button></li>
                     <li><button onClick={() => this.updateDashboard(<Tasks/>)}>Задачи</button></li>
                     <li><button onClick={() => this.updateDashboard(<Account/>)}>Счет</button></li>
                 </ul>
