@@ -62,6 +62,8 @@ class Tasks extends React.Component {
                     <tr>
                         <td>Id</td>
                         <td>Описание</td>
+                        <td>Статус</td>
+                        <td>Ответственный</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -70,6 +72,8 @@ class Tasks extends React.Component {
                             return <tr>
                                 <td>{t.id}</td>
                                 <td>{t.description}</td>
+                                <td>{t.status}</td>
+                                <td>{t.assigneeName}</td>
                             </tr>
                         })
                     }
