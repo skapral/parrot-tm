@@ -4,8 +4,11 @@ class Tasks extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            description: "",
             tasks: []
         };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -14,23 +17,26 @@ class Tasks extends React.Component {
             headers: {
                 Authorization: localStorage.getItem("jwt")
             }
+        }).then(response => {
+            if (!response.ok) {
+                return Promise.reject(response);
+            }
+            return response;
         })
-            .then(response => {
-                if (!response.ok) {
-                    return Promise.reject(response);
-                }
-                return response;
-            })
-            .then(r => {
-                r.json().then(b => {
-                    this.setState({tasks: b});
-                });
+        .then(r => {
+            r.json().then(b => {
+                this.setState({tasks: b});
             });
+        });
     }
 
-    handleSubmit(event, description) {
+    handleChange(event) {
+        this.setState({description: event.target.value});
+    }
+
+    handleSubmit(event) {
         event.preventDefault();
-        fetch("/tasks/?description=" + description, {
+        fetch("/tasks/?description=" + this.state.description, {
             method: "POST",
             headers: {
                 Authorization: localStorage.getItem("jwt")
@@ -41,17 +47,12 @@ class Tasks extends React.Component {
     }
 
     render() {
-        var description;
-
-        var handleChange = event => description = event.target.value;
-
-        console.log("this.state", this.state.tasks)
         return <div className="Tasks">
             Задачи
 
-            <form onSubmit={e => this.handleSubmit(e, description)}>
+            <form onSubmit={this.handleSubmit}>
                 <label>
-                    Имя: <input type="text" name="description" value={description} onChange={handleChange}/>
+                    Имя: <input type="text" name="description" value={this.state.description} onChange={this.handleChange}/>
                 </label>
                 <input type="submit" value="Создать"/>
             </form>

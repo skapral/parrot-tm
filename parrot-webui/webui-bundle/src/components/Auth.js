@@ -1,13 +1,25 @@
 import React from 'react';
 
-function Auth(props) {
-    console.log("props", props);
+class Auth extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            login: "",
+            users: []
+        };
 
-    let login;
+        this.onAuthorized = props.onAuthorized
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
 
-    function handleSubmit(event) {
+    handleChange(event) {
+        this.setState({login : event.target.value});
+    }
+
+    handleSubmit(event) {
         event.preventDefault();
-        fetch("/auth/login?login=" + login, {
+        fetch("/auth/login?login=" + this.state.login, {
             method: 'POST'
         })
             .then(response => {
@@ -20,22 +32,20 @@ function Auth(props) {
             .then(auth => { console.log("Authorization = " + auth); return auth; })
             .then(auth => { localStorage.setItem('jwt', auth); return auth; })
             .catch(r => { localStorage.removeItem('jwt'); })
-            .finally(() => props.onAuthorized());
+            .finally(() => this.onAuthorized());
     }
 
-    function handleChange(event) {
-        console.log("handleChange", event.target.value)
-        login = event.target.value;
-    }
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                Имя: <input type="text" name="login" value={login} onChange={handleChange}/>
-            </label>
-            <input type="submit" value="Отправить"/>
-        </form>
-    );
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    Имя: <input type="text" name="login" value={this.state.login} onChange={this.handleChange}/>
+                </label>
+                <input type="submit" value="Отправить"/>
+            </form>
+        );
+    }
 }
 
 export default Auth;
