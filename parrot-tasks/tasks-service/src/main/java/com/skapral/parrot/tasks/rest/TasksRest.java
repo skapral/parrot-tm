@@ -1,8 +1,10 @@
 package com.skapral.parrot.tasks.rest;
 
 import com.skapral.parrot.common.DoAndNotify;
+import com.skapral.parrot.common.SequentialOperation;
 import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.data.TaskAssignment;
+import com.skapral.parrot.common.events.impl.MultipleEvents;
 import com.skapral.parrot.common.events.impl.RabbitEvent;
 import com.skapral.parrot.tasks.ops.CompleteTask;
 import com.skapral.parrot.tasks.ops.CreateTask;
@@ -44,18 +46,38 @@ public class TasksRest {
     @PostMapping
     public void newTask(@RequestParam("description") String description) {
         var taskId = UUID.randomUUID();
+        var taskAssignments = new RandomTasksAssignments(
+                List.of(taskId),
+                new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
+                random
+        ).get();
         new DoAndNotify(
-                new CreateTask(
+                new SequentialOperation(
+                    new CreateTask(
                         jdbcTemplate,
                         taskId,
                         description
+                    ),
+                    new DoTaskAssignments(
+                        jdbcTemplate,
+                        taskAssignments
+                    )
                 ),
-                new RabbitEvent<>(
+                new MultipleEvents(
+                    new RabbitEvent<>(
                         rabbitTemplate,
                         "outbox",
                         "",
                         EventType.TASK_NEW,
                         new com.skapral.parrot.common.events.data.Task(taskId)
+                    ),
+                    new RabbitEvent<>(
+                        rabbitTemplate,
+                        "outbox",
+                        "",
+                        EventType.TASKS_REASSIGNED,
+                        taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
+                    )
                 )
         ).execute();
     }
