@@ -22,6 +22,6 @@ public class EstimateNewTask implements Operation {
     public final void execute() {
         var penalty = -20 + estimationSource.nextInt(10);
         var reward = 20 + estimationSource.nextInt(20);
-        template.update("INSERT INTO reward (taskid, reward, penalty) VALUES (?, ?, ?)", taskId, reward, penalty);
+        template.update("INSERT INTO taskcost (taskid, reward, penalty) VALUES (?, ?, ?)", taskId, reward, penalty);
     }
 }

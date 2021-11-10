@@ -1,21 +1,22 @@
 create table if not exists account
 (
     id uuid primary key,
-    value integer
+    money integer not null
 );
 
 create table if not exists transactionlog
 (
     id uuid primary key,
-    time timestamp default 'now',
-    accountid uuid,
+    time timestamp default 'now' not null,
+    accountid uuid not null,
     description varchar(256),
-    value integer
+    debit integer,
+    credit integer
 );
 
-create table if not exists reward
+create table if not exists taskcost
 (
     taskid uuid primary key,
-    reward integer,
-    penalty integer
+    reward integer not null,
+    penalty integer not null
 )

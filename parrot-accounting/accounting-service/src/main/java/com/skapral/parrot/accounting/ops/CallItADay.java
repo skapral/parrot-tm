@@ -17,8 +17,8 @@ public class CallItADay implements Operation {
     public final void execute() {
         var accounts = List.ofAll(template.queryForList("SELECT id FROM account", UUID.class));
         template.batchUpdate(
-                "INSERT INTO transactionlog (id, accountid, description, value) values (?, ?, ?, ?)",
-                accounts.map(accId -> new Object[] {UUID.randomUUID(), accId, "Working day over, time for payback", 0}).asJava()
+                "INSERT INTO transactionlog (id, accountid, description) values (?, ?, ?)",
+                accounts.map(accId -> new Object[] {UUID.randomUUID(), accId, "Working day over, time for payback"}).asJava()
         );
     }
 }
