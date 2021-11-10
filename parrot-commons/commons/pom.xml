@@ -19,5 +19,10 @@
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.pragmaticobjects.oo.inference</groupId>
+            <artifactId>inference-basic</artifactId>
+            <version>0.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

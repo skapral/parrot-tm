@@ -6,6 +6,7 @@ import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.data.TaskAssignment;
 import com.skapral.parrot.common.events.impl.MultipleEvents;
 import com.skapral.parrot.common.events.impl.RabbitEvent;
+import com.skapral.parrot.tasks.events.TasksReassignmentEvent;
 import com.skapral.parrot.tasks.ops.CompleteTask;
 import com.skapral.parrot.tasks.ops.CreateTask;
 import com.skapral.parrot.tasks.ops.DoTaskAssignments;
@@ -71,11 +72,10 @@ public class TasksRest {
                         EventType.TASK_NEW,
                         new com.skapral.parrot.common.events.data.Task(taskId)
                     ),
-                    new RabbitEvent<>(
+                    new TasksReassignmentEvent(
                         rabbitTemplate,
                         "outbox",
                         "",
-                        EventType.TASKS_REASSIGNED,
                         taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
                     )
                 )
@@ -112,12 +112,11 @@ public class TasksRest {
                     jdbcTemplate,
                     taskAssignments
             ),
-            new RabbitEvent<>(
-                    rabbitTemplate,
-                    "outbox",
-                    "",
-                    EventType.TASKS_REASSIGNED,
-                    taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
+            new TasksReassignmentEvent(
+                rabbitTemplate,
+                "outbox",
+                "",
+                taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
             )
         ).execute();
     }

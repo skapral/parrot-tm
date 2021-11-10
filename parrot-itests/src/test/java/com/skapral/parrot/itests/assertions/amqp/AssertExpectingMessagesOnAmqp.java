@@ -35,7 +35,11 @@ public class AssertExpectingMessagesOnAmqp implements Assertion {
         var callForDeliveries = eavesdropSources.<Assertion>foldLeft(
             () -> {
                 assertion.check();
-                Awaitility.waitAtMost(Duration.ofMinutes(1)).await().until(() -> assertionOnEavesdroppedState.apply(List.ofAll(deliveries)).check());
+                Awaitility.waitAtMost(Duration.ofMinutes(1))
+                    .pollDelay(Duration.ofSeconds(0))
+                    .pollInterval(Duration.ofSeconds(5))
+                    .await()
+                    .until(() -> assertionOnEavesdroppedState.apply(List.ofAll(deliveries)).check());
             },
             (Assertion r, AmqpSource s) -> () -> {
                 try(var channel = connection.createChannel()) {

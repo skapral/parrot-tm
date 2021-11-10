@@ -5,11 +5,11 @@ import io.vavr.collection.List;
 
 import java.util.function.Function;
 
-public class ExpectMessage implements Expectation {
+public class ExpectMessageAbsense implements Expectation {
     private final List<Delivery> messages;
     private final Function<Delivery, Expectation> expectationFn;
 
-    public ExpectMessage(List<Delivery> messages, Function<Delivery, Expectation> expectationFn) {
+    public ExpectMessageAbsense(List<Delivery> messages, Function<Delivery, Expectation> expectationFn) {
         this.messages = messages;
         this.expectationFn = expectationFn;
     }
@@ -17,7 +17,7 @@ public class ExpectMessage implements Expectation {
     @Override
     public final boolean check() {
         return messages
-            .map(message -> expectationFn.apply(message).check())
-            .foldLeft(false, (b, m) -> b || m);
+            .map(message -> !expectationFn.apply(message).check())
+            .foldLeft(true, (b, m) -> b && m);
     }
 }
