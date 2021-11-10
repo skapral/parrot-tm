@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
+import java.util.Map;
 
 public class RegisterUser implements Endpoint {
     private final Authentication<?> auth;
@@ -28,9 +29,11 @@ public class RegisterUser implements Endpoint {
     }
 
     private static String request(String userName, String userRole) {
-        return new JSONObject()
-                .put("login", userName)
-                .put("role", userRole)
-                .toString();
+        return new JSONObject(
+            Map.of(
+                "login", userName,
+                "role", userRole
+            )
+        ).toString();
     }
 }
