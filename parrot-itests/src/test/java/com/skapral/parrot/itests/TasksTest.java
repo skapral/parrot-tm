@@ -1,20 +1,26 @@
 package com.skapral.parrot.itests;
 
+import com.pragmaticobjects.oo.tests.AssertCombined;
 import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
 import com.skapral.parrot.itests.assertions.amqp.AmqpSource;
 import com.skapral.parrot.itests.assertions.amqp.AssertExpectingMessagesOnAmqp;
+import com.skapral.parrot.itests.assertions.amqp.AssertMessageBody;
 import com.skapral.parrot.itests.assertions.amqp.AssertMessageType;
 import com.skapral.parrot.itests.assertions.amqp.expectations.AssertionBasedExpectation;
 import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectAll;
 import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectMessage;
 import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectMessageAbsense;
-import com.skapral.parrot.itests.assertions.business.AssertTasksListSize;
 import com.skapral.parrot.itests.assertions.business.TaskCreation;
+import com.skapral.parrot.itests.assertions.http.AssertHttp;
+import com.skapral.parrot.itests.assertions.http.StatusCode2XX;
+import com.skapral.parrot.itests.assertions.http.endpoints.GetListOfTasks;
 import com.skapral.parrot.itests.assertions.jdbc.AssertAssumingDbState;
+import com.skapral.parrot.itests.assertions.json.AssertJsonHas;
 import com.skapral.parrot.itests.utils.authentication.FakeAuthentication;
 import io.vavr.collection.List;
 import org.apache.commons.io.IOUtils;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -103,7 +109,17 @@ public class TasksTest extends TestsSuite {
                                 new ExpectMessage(
                                     deliveries,
                                     delivery -> new AssertionBasedExpectation(
-                                        new AssertMessageType(delivery, "TASKS_REASSIGNED")
+                                        new AssertCombined(
+                                            new AssertMessageType(delivery, "TASKS_REASSIGNED"),
+                                            new AssertMessageBody(
+                                                delivery,
+                                                body -> new AssertJsonHas(
+                                                    body,
+                                                    "[{\"assigneeId\":\"99999999-9999-9999-9999-999999999999\", \"taskId\":\"_\"}]",
+                                                    JSONCompareMode.LENIENT
+                                                )
+                                            )
+                                        )
                                     )
                                 ),
                                 new ExpectMessage(
@@ -124,13 +140,18 @@ public class TasksTest extends TestsSuite {
                     deployment -> new AssertAssumingDbState(
                         deployment.datasource("postgres", 5432, "tasks", "postgres", "admin"),
                         SAMPLE_TASKS_SQL,
-                        new AssertTasksListSize(
-                            new FakeAuthentication(
-                                "phantom",
-                                "PARROT"
+                        new AssertHttp(
+                            new GetListOfTasks(
+                                new FakeAuthentication(
+                                    "phantom",
+                                    "PARROT"
+                                ),
+                                deployment.serviceURI("tasks-service", 8080)
                             ),
-                            deployment.serviceURI("tasks-service", 8080),
-                            3
+                            resp -> new AssertCombined(
+                                new StatusCode2XX(resp),
+                                new AssertJsonHas(resp.body(), "[_, _, _]", JSONCompareMode.STRICT)
+                            )
                         )
                     )
                 )

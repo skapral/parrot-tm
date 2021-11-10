@@ -9,9 +9,9 @@ import com.skapral.parrot.itests.assertions.amqp.AssertMessageBody;
 import com.skapral.parrot.itests.assertions.amqp.AssertMessageType;
 import com.skapral.parrot.itests.assertions.amqp.expectations.AssertionBasedExpectation;
 import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectMessage;
-import com.skapral.parrot.itests.assertions.json.AssertJsonHasFieldWithValue;
+import com.skapral.parrot.itests.assertions.json.AssertJsonHas;
 import io.vavr.collection.List;
-import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 public class AssertExpectingNewUserMessage extends AssertExpectingMessagesOnAmqp {
     public AssertExpectingNewUserMessage(Assertion assertion, Connection connection, String login) {
@@ -19,7 +19,7 @@ public class AssertExpectingNewUserMessage extends AssertExpectingMessagesOnAmqp
             assertion,
             connection,
             List.of(
-                    new AmqpSource("outbox", "")
+                new AmqpSource("outbox", "")
             ),
             deliveries -> new ExpectMessage(
                 deliveries,
@@ -27,12 +27,12 @@ public class AssertExpectingNewUserMessage extends AssertExpectingMessagesOnAmqp
                     new AssertCombined(
                         new AssertMessageType(msg, "USER_NEW"),
                         new AssertMessageBody(
-                                msg,
-                                body -> new AssertJsonHasFieldWithValue(
-                                        new JSONObject(body),
-                                        "login",
-                                        login
-                                )
+                            msg,
+                            body -> new AssertJsonHas(
+                                body,
+                                String.format("{\"login\": \"%s\"}", login),
+                                JSONCompareMode.LENIENT
+                            )
                         )
                     )
                 )
