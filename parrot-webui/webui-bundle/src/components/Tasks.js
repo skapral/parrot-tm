@@ -9,6 +9,7 @@ class Tasks extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCloseTask = this.handleCloseTask.bind(this);
     }
 
     componentDidMount() {
@@ -46,6 +47,18 @@ class Tasks extends React.Component {
         });
     }
 
+    handleCloseTask(event, taskId) {
+        event.preventDefault();
+        fetch("/tasks/close?id=" + taskId, {
+            method: "POST",
+            headers: {
+                Authorization: localStorage.getItem("jwt")
+            }
+        }).finally(() => {
+            this.componentDidMount();
+        });
+    }
+
     render() {
         return <div className="Tasks">
             Задачи
@@ -64,6 +77,7 @@ class Tasks extends React.Component {
                         <td>Описание</td>
                         <td>Статус</td>
                         <td>Ответственный</td>
+                        <td/>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,6 +88,9 @@ class Tasks extends React.Component {
                                 <td>{t.description}</td>
                                 <td>{t.status}</td>
                                 <td>{t.assigneeName}</td>
+                                <td>
+                                    <button onClick={this.handleCloseTask.bind(t.id)} name="Close"/>
+                                </td>
                             </tr>
                         })
                     }

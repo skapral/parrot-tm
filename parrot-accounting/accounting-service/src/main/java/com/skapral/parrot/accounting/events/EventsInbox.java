@@ -11,6 +11,7 @@ import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.EventsConfig;
 import com.skapral.parrot.common.events.data.Task;
 import com.skapral.parrot.common.events.data.TaskAssignment;
+import com.skapral.parrot.common.events.data.TaskAssignments;
 import com.skapral.parrot.common.events.data.User;
 import io.vavr.collection.List;
 import org.slf4j.Logger;
@@ -62,15 +63,17 @@ public class EventsInbox {
                     break;
                 }
                 case TASKS_REASSIGNED: {
-                    var taskAssignments = objectMapper.readValue(message.getBody(), new TypeReference<List<TaskAssignment>>() {});
-                    taskAssignments.map(
+                    var taskAssignments = objectMapper.readValue(message.getBody(), TaskAssignments.class);
+                    taskAssignments.getList().map(
                             ta -> new ChargeFeeForTaskAssignment(template, ta.getTaskId(), ta.getAssigneeId())
                     ).forEach(Operation::execute);
                     break;
                 }
                 case TASK_COMPLETED: {
-                    var taskAssignment = objectMapper.readValue(message.getBody(), TaskAssignment.class);
-                    new PayForTaskCompletion(template, taskAssignment.getTaskId(), taskAssignment.getAssigneeId());
+                    var taskAssignments = objectMapper.readValue(message.getBody(), TaskAssignments.class);
+                    taskAssignments.getList().map(
+                        ta -> new PayForTaskCompletion(template, ta.getTaskId(), ta.getAssigneeId())
+                    ).forEach(Operation::execute);
                     break;
                 }
                 default:
