@@ -4,6 +4,7 @@ import com.skapral.parrot.common.Event;
 import com.skapral.parrot.common.events.EventType;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class RabbitEvent<T> implements Event {
@@ -23,6 +24,14 @@ public class RabbitEvent<T> implements Event {
 
     @Override
     public final void send() {
+        Class<?> clazz = null;
+        if(payload instanceof Iterable<?>) {
+            var iter = ((Iterable<?>) payload).iterator();
+            if(iter.hasNext()) {
+                clazz = iter.next().getClass();
+            }
+        }
+        var _c = clazz;
         template.convertAndSend(
                 exchange,
                 routingKey,
@@ -31,6 +40,8 @@ public class RabbitEvent<T> implements Event {
                     var props = message.getMessageProperties();
                     props.setMessageId(UUID.randomUUID().toString());
                     props.setType(type.name());
+                    // Nasty hack to overcome generics erasion
+                    Optional.ofNullable(_c).ifPresent(c -> props.setHeader("__ContentTypeId__", c.getName()));
                     return message;
                 }
         );
