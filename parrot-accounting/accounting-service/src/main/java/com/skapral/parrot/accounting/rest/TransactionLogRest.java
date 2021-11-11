@@ -5,12 +5,14 @@ import io.vavr.collection.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("transactions")
 public class TransactionLogRest {
     private final JdbcTemplate jdbcTemplate;
 
