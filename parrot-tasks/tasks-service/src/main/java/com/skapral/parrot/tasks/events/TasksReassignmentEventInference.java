@@ -6,6 +6,7 @@ import com.skapral.parrot.common.Event;
 import com.skapral.parrot.common.EventInferred;
 import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.data.TaskAssignment;
+import com.skapral.parrot.common.events.data.TaskAssignments;
 import com.skapral.parrot.common.events.impl.NoEvent;
 import com.skapral.parrot.common.events.impl.RabbitEvent;
 import io.vavr.collection.List;
@@ -34,7 +35,9 @@ public @Infers(value = "TasksReassignmentEvent", using = EventInferred.class) cl
             exchange,
             routingKey,
             EventType.TASKS_REASSIGNED,
-            taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
+            new TaskAssignments(
+                taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
+            )
         );
     }
 }
