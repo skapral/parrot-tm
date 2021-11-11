@@ -16,7 +16,9 @@ import org.springframework.context.annotation.Import;
 public class EventsConfig {
     @Bean
     public Jackson2JsonMessageConverter messageConverter(ObjectMapper objectMapper) {
-        return new Jackson2JsonMessageConverter(objectMapper);
+        var converter = new Jackson2JsonMessageConverter(objectMapper);
+        converter.setAssumeSupportedContentType(false);
+        return converter;
     }
 
     @Bean
