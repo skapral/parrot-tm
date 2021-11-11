@@ -1,7 +1,7 @@
 create table if not exists account
 (
     id uuid primary key,
-    money integer not null
+    money integer not null default 0
 );
 
 create table if not exists transactionlog
