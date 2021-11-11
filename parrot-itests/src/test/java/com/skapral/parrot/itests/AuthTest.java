@@ -1,20 +1,29 @@
 package com.skapral.parrot.itests;
 
 import com.auth0.jwt.algorithms.Algorithm;
+import com.pragmaticobjects.oo.tests.AssertCombined;
 import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
+import com.skapral.parrot.itests.assertions.amqp.AmqpSource;
+import com.skapral.parrot.itests.assertions.amqp.AssertExpectingMessagesOnAmqp;
+import com.skapral.parrot.itests.assertions.amqp.AssertMessageBody;
+import com.skapral.parrot.itests.assertions.amqp.AssertMessageType;
+import com.skapral.parrot.itests.assertions.amqp.expectations.AssertionBasedExpectation;
+import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectMessage;
 import com.skapral.parrot.itests.assertions.business.AssertAuthenticationFailure;
 import com.skapral.parrot.itests.assertions.business.AssertCurrentUser;
-import com.skapral.parrot.itests.assertions.business.AssertExpectingNewUserMessage;
 import com.skapral.parrot.itests.assertions.business.UserRegistration;
 import com.skapral.parrot.itests.assertions.http.AssertHttp;
 import com.skapral.parrot.itests.assertions.http.StatusCode403;
 import com.skapral.parrot.itests.assertions.http.endpoints.RegisterUser;
 import com.skapral.parrot.itests.assertions.jdbc.AssertAssumingDbState;
+import com.skapral.parrot.itests.assertions.json.AssertJsonHas;
 import com.skapral.parrot.itests.assertions.jwt.AssertJwtHasClaim;
 import com.skapral.parrot.itests.utils.authentication.EldrichJwtTokenAuthorization;
 import com.skapral.parrot.itests.utils.authentication.JwtAuthentication;
+import io.vavr.collection.List;
 import org.apache.commons.io.IOUtils;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -50,7 +59,7 @@ public class AuthTest extends TestsSuite {
                 "registering new user",
                 new AssertOnTestcontainersDeployment(
                     ENVIRONMENT,
-                    deployment -> new AssertExpectingNewUserMessage(
+                    deployment -> new AssertExpectingMessagesOnAmqp(
                         new UserRegistration(
                             new JwtAuthentication(
                                 deployment.deploymentScopedMemory(),
@@ -62,7 +71,25 @@ public class AuthTest extends TestsSuite {
                             "PARROT"
                         ),
                         deployment.amqp("amqp", 5672, "guest", "guest"),
-                        "testuser"
+                        List.of(
+                            new AmqpSource("outbox", "")
+                        ),
+                        deliveries -> new ExpectMessage(
+                            deliveries,
+                            msg -> new AssertionBasedExpectation(
+                                new AssertCombined(
+                                    new AssertMessageType(msg, "USER_NEW"),
+                                    new AssertMessageBody(
+                                        msg,
+                                        body -> new AssertJsonHas(
+                                            body,
+                                            "{\"login\": \"testuser\"}",
+                                            JSONCompareMode.LENIENT
+                                        )
+                                    )
+                                )
+                            )
+                        )
                     )
                 )
             ),
