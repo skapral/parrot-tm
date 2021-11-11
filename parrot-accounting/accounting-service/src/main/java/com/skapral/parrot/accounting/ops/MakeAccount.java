@@ -16,6 +16,6 @@ public class MakeAccount implements Operation {
 
     @Override
     public final void execute() {
-        template.update("INSERT INTO account (id, value) VALUES (?, ?)", accountId, 0);
+        template.update("INSERT INTO account (id) VALUES (?)", accountId);
     }
 }
