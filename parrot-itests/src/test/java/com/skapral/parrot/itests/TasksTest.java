@@ -115,7 +115,7 @@ public class TasksTest extends TestsSuite {
                                                 delivery,
                                                 body -> new AssertJsonHas(
                                                     body,
-                                                    "[{\"assigneeId\":\"99999999-9999-9999-9999-999999999999\", \"taskId\":\"_\"}]",
+                                                    "{\"list\": [{\"assigneeId\":\"99999999-9999-9999-9999-999999999999\", \"taskId\":\"_\"}]}",
                                                     JSONCompareMode.LENIENT
                                                 )
                                             )
