@@ -48,54 +48,54 @@ public class TasksRest {
     public void newTask(@RequestParam("description") String description) {
         var taskId = UUID.randomUUID();
         var taskAssignments = new RandomTasksAssignments(
-                List.of(taskId),
-                new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
-                random
+            List.of(taskId),
+            new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
+            random
         ).get();
         new DoAndNotify(
-                new SequentialOperation(
-                    new CreateTask(
-                        jdbcTemplate,
-                        taskId,
-                        description
-                    ),
-                    new DoTaskAssignments(
-                        jdbcTemplate,
-                        taskAssignments
-                    )
+            new SequentialOperation(
+                new CreateTask(
+                    jdbcTemplate,
+                    taskId,
+                    description
                 ),
-                new MultipleEvents(
-                    new RabbitEvent<>(
-                        rabbitTemplate,
-                        "outbox",
-                        "",
-                        EventType.TASK_NEW,
-                        new com.skapral.parrot.common.events.data.Task(taskId)
-                    ),
-                    new TasksReassignmentEvent(
-                        rabbitTemplate,
-                        "outbox",
-                        "",
-                        taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
-                    )
+                new DoTaskAssignments(
+                    jdbcTemplate,
+                    taskAssignments
                 )
+            ),
+            new MultipleEvents(
+                new RabbitEvent<>(
+                    rabbitTemplate,
+                    "outbox",
+                    "",
+                    EventType.TASK_NEW,
+                    new com.skapral.parrot.common.events.data.Task(taskId)
+                ),
+                new TasksReassignmentEvent(
+                    rabbitTemplate,
+                    "outbox",
+                    "",
+                    taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
+                )
+            )
         ).execute();
     }
 
     @PostMapping("close")
     public void closeTask(@RequestParam("id") UUID id) {
         new DoAndNotify(
-                new CompleteTask(
-                        jdbcTemplate,
-                        id
-                ),
-                new RabbitEvent<>(
-                        rabbitTemplate,
-                        "outbox",
-                        "",
-                        EventType.TASK_COMPLETED,
-                        new com.skapral.parrot.common.events.data.Task(id)
-                )
+            new CompleteTask(
+                jdbcTemplate,
+                id
+            ),
+            new RabbitEvent<>(
+                rabbitTemplate,
+                "outbox",
+                "",
+                EventType.TASK_COMPLETED,
+                new com.skapral.parrot.common.events.data.Task(id)
+            )
         ).execute();
     }
 
@@ -103,14 +103,14 @@ public class TasksRest {
     public void assign() {
         var taskIds = new IdsOfTasksInProgress(jdbcTemplate).get();
         var taskAssignments = new RandomTasksAssignments(
-                taskIds,
-                new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
-                random
+            taskIds,
+            new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
+            random
         ).get();
         new DoAndNotify(
             new DoTaskAssignments(
-                    jdbcTemplate,
-                    taskAssignments
+                jdbcTemplate,
+                taskAssignments
             ),
             new TasksReassignmentEvent(
                 rabbitTemplate,

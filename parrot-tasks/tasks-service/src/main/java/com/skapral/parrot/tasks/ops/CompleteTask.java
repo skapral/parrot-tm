@@ -17,6 +17,6 @@ public class CompleteTask implements Operation {
 
     @Override
     public final void execute() {
-        template.update("UPDATE task SET status = ? WHERE id = ?", Status.DONE, id);
+        template.update("UPDATE task SET status = ? WHERE id = ?", Status.DONE.name(), id);
     }
 }

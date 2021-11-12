@@ -47,9 +47,10 @@ class Tasks extends React.Component {
         });
     }
 
-    handleCloseTask(event, taskId) {
+    handleCloseTask(event) {
+        console.log(event.target.id);
         event.preventDefault();
-        fetch("/tasks/close?id=" + taskId, {
+        fetch("/tasks/close?id=" + event.target.id, {
             method: "POST",
             headers: {
                 Authorization: localStorage.getItem("jwt")
@@ -83,13 +84,14 @@ class Tasks extends React.Component {
                 <tbody>
                     {
                         this.state.tasks.map(t => {
+                            let closeBtn = <button id={t.id} onClick={this.handleCloseTask}>Close</button>
                             return <tr>
                                 <td>{t.id}</td>
                                 <td>{t.description}</td>
                                 <td>{t.status}</td>
                                 <td>{t.assigneeName}</td>
                                 <td>
-                                    <button onClick={this.handleCloseTask.bind(t.id)} name="Close"/>
+                                    {t.status != "DONE" ? closeBtn : undefined}
                                 </td>
                             </tr>
                         })
