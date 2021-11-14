@@ -5,8 +5,10 @@ import com.skapral.parrot.common.Query;
 import io.vavr.collection.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class GetTransactionLog implements Query<List<TransactionLog>> {
@@ -22,7 +24,7 @@ public class GetTransactionLog implements Query<List<TransactionLog>> {
 
     @Override
     public final List<TransactionLog> get() {
-        var now = Instant.now();
+        var now = LocalDateTime.now();
         var then = now.minus(timePeriod);
         return List.ofAll(
             template.query(

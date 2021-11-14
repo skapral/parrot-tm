@@ -23,7 +23,7 @@ public class TransactionLogRest {
     @GetMapping
     public List<TransactionLog> current() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
-        var id = UUID.fromString(auth.getPrincipal().toString());
+        var id = UUID.fromString(auth.getName());
         return new GetTransactionLog(
             jdbcTemplate,
             id,
