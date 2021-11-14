@@ -11,6 +11,7 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - parrotnet
+    command: ["postgres", "-c", "log_statement=all" ]
   amqp:
     image: parrot-rabbitmq:${project.version}
     ports:
