@@ -85,7 +85,7 @@
     {
       "name": "outbox",
       "vhost": "/",
-      "type": "direct",
+      "type": "fanout",
       "durable": true,
       "auto_delete": false,
       "internal": false,
