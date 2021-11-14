@@ -1,19 +1,18 @@
 package com.skapral.parrot.tasks.rest;
 
+import com.pragmaticobjects.oo.memoized.chm.MemoryCHM;
 import com.skapral.parrot.common.DoAndNotify;
 import com.skapral.parrot.common.SequentialOperation;
 import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.data.TaskAssignment;
+import com.skapral.parrot.common.events.data.TaskAssignments;
 import com.skapral.parrot.common.events.impl.MultipleEvents;
 import com.skapral.parrot.common.events.impl.RabbitEvent;
 import com.skapral.parrot.tasks.events.TasksReassignmentEvent;
 import com.skapral.parrot.tasks.ops.CompleteTask;
 import com.skapral.parrot.tasks.ops.CreateTask;
 import com.skapral.parrot.tasks.ops.DoTaskAssignments;
-import com.skapral.parrot.tasks.queries.IdsOfAllPossibleAssignees;
-import com.skapral.parrot.tasks.queries.RandomTasksAssignments;
-import com.skapral.parrot.tasks.queries.Tasks;
-import com.skapral.parrot.tasks.queries.IdsOfTasksInProgress;
+import com.skapral.parrot.tasks.queries.*;
 import io.vavr.collection.List;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +45,10 @@ public class TasksRest {
 
     @PostMapping
     public void newTask(@RequestParam("description") String description) {
+        var memory = new com.pragmaticobjects.oo.memoized.chm.MemoryCHM();
         var taskId = UUID.randomUUID();
         var taskAssignments = new RandomTasksAssignments(
+            memory,
             List.of(taskId),
             new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
             random
@@ -94,15 +95,24 @@ public class TasksRest {
                 "outbox",
                 "",
                 EventType.TASK_COMPLETED,
-                new com.skapral.parrot.common.events.data.Task(id)
+                new TaskAssignments(
+                    List.of(
+                        new com.skapral.parrot.common.events.data.TaskAssignment(
+                            new AssigneeIdByTask(jdbcTemplate, id).get(),
+                            id
+                        )
+                    )
+                )
             )
         ).execute();
     }
 
     @PostMapping("assign")
     public void assign() {
+        var memory = new MemoryCHM();
         var taskIds = new IdsOfTasksInProgress(jdbcTemplate).get();
         var taskAssignments = new RandomTasksAssignments(
+            memory,
             taskIds,
             new IdsOfAllPossibleAssignees(jdbcTemplate).get(),
             random
