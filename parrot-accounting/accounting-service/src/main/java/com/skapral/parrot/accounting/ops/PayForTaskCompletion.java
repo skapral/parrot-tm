@@ -20,7 +20,7 @@ public class PayForTaskCompletion implements Operation {
     @Override
     public final void execute() {
         var rewardForCompletion = template.queryForObject("SELECT reward FROM taskcost WHERE taskid = ?", Integer.class, taskId);
-        template.update("UPDATE account SET value = value + ? WHERE id = ?", rewardForCompletion, assigneeId);
+        template.update("UPDATE account SET money = money + ? WHERE id = ?", rewardForCompletion, assigneeId);
         template.update("INSERT INTO transactionlog (id, accountid, description, debit) values (?, ?, ?, ?)",
                 UUID.randomUUID(), assigneeId, "Rewarded for task completion - " + taskId, rewardForCompletion);
     }
