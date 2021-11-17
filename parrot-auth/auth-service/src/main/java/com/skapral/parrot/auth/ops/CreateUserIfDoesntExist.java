@@ -1,6 +1,5 @@
 package com.skapral.parrot.auth.ops;
 
-import com.skapral.parrot.auth.rest.Role;
 import com.skapral.parrot.common.DoAndNotify;
 import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.data.User;
@@ -11,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.UUID;
 
 public class CreateUserIfDoesntExist extends DoIfUserDoesntExist {
-    public CreateUserIfDoesntExist(JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate, UUID id, String login, Role role) {
+    public CreateUserIfDoesntExist(JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate, UUID id, String login, String role) {
         super(
                 jdbcTemplate,
                 id,

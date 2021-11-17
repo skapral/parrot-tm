@@ -15,5 +15,5 @@ import lombok.extern.jackson.Jacksonized;
 @NoArgsConstructor
 public class UserCreation {
     String login;
-    Role role;
+    String role;
 }

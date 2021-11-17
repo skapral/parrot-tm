@@ -14,5 +14,5 @@ import java.util.UUID;
 public class User {
     private UUID id;
     private String login;
-    private Role role;
+    private String role;
 }

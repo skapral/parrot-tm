@@ -1,6 +1,5 @@
 package com.skapral.parrot.auth.ops;
 
-import com.skapral.parrot.auth.rest.Role;
 import com.skapral.parrot.common.Operation;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -10,9 +9,9 @@ public class NewUser implements Operation {
     private final JdbcTemplate jdbcTemplate;
     private final UUID id;
     private final String login;
-    private final Role role;
+    private final String role;
 
-    public NewUser(JdbcTemplate jdbcTemplate, UUID id, String login, Role role) {
+    public NewUser(JdbcTemplate jdbcTemplate, UUID id, String login, String role) {
         this.jdbcTemplate = jdbcTemplate;
         this.id = id;
         this.login = login;

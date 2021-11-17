@@ -24,9 +24,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 class RolesClaim implements JwtClaim {
-    private final List<Role> roles;
+    private final List<String> roles;
 
-    public RolesClaim(List<Role> roles) {
+    public RolesClaim(List<String> roles) {
         this.roles = roles;
     }
 
@@ -37,7 +37,7 @@ class RolesClaim implements JwtClaim {
 
     @Override
     public final String value() {
-        return roles.map(Role::toString).collect(Collectors.joining(","));
+        return roles.collect(Collectors.joining(","));
     }
 }
 
@@ -83,7 +83,6 @@ public class AuthRest {
                 .filter(a -> a instanceof RoleAuthority)
                 .map(a -> (RoleAuthority) a)
                 .map(a -> a.role)
-                .map(Role::valueOf)
                 .collect(List.collector());
 
         var jwtToken = jwtUtils.generateJwtToken(
