@@ -64,7 +64,7 @@ public class TasksTest extends TestsSuite {
                     deployment -> new AssertExpectingMessagesOnAmqp(
                         new TaskCreation(
                             deployment.serviceURI("tasks-service", 8080),
-                            new FakeAuthentication("phantom", "PARROT"),
+                            new FakeAuthentication("phantom", "MANAGER"),
                             "TestTask"
                         ),
                         deployment.amqp("amqp", 5672, "guest", "guest"),
@@ -98,7 +98,7 @@ public class TasksTest extends TestsSuite {
                         new AssertExpectingMessagesOnAmqp(
                             new TaskCreation(
                                 deployment.serviceURI("tasks-service", 8080),
-                                new FakeAuthentication("phantom", "PARROT"),
+                                new FakeAuthentication("phantom", "MANAGER"),
                                 "TestTask"
                             ),
                             deployment.amqp("amqp", 5672, "guest", "guest"),

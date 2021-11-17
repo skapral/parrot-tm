@@ -17,6 +17,7 @@ import io.vavr.collection.List;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +45,7 @@ public class TasksRest {
     }
 
     @PostMapping
+    @Secured("MANAGER")
     public void newTask(@RequestParam("description") String description) {
         var memory = new com.pragmaticobjects.oo.memoized.chm.MemoryCHM();
         var taskId = UUID.randomUUID();
@@ -108,6 +110,7 @@ public class TasksRest {
     }
 
     @PostMapping("assign")
+    @Secured("MANAGER")
     public void assign() {
         var memory = new MemoryCHM();
         var taskIds = new IdsOfTasksInProgress(jdbcTemplate).get();
