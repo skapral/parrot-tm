@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skapral.parrot.common.events.EventType;
 import com.skapral.parrot.common.events.EventsConfig;
 import com.skapral.parrot.common.events.data.User;
-import com.skapral.parrot.tasks.ops.CreateAssignee;
+import com.skapral.parrot.tasks.ops.CreateAssigneeIfNeeded;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -40,7 +40,7 @@ public class EventsInbox {
             switch (type) {
                 case USER_NEW: {
                     var user = objectMapper.readValue(message.getBody(), User.class);
-                    new CreateAssignee(template, user.getId(), user.getLogin()).execute();
+                    new CreateAssigneeIfNeeded(template, user.getId(), user.getLogin(), user.getRole()).execute();
                     break;
                 }
                 default:

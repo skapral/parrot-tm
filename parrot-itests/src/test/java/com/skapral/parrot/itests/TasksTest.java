@@ -3,10 +3,8 @@ package com.skapral.parrot.itests;
 import com.pragmaticobjects.oo.tests.AssertCombined;
 import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
-import com.skapral.parrot.itests.assertions.amqp.AmqpSource;
-import com.skapral.parrot.itests.assertions.amqp.AssertExpectingMessagesOnAmqp;
-import com.skapral.parrot.itests.assertions.amqp.AssertMessageBody;
-import com.skapral.parrot.itests.assertions.amqp.AssertMessageType;
+import com.rabbitmq.client.AMQP;
+import com.skapral.parrot.itests.assertions.amqp.*;
 import com.skapral.parrot.itests.assertions.amqp.expectations.AssertionBasedExpectation;
 import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectAll;
 import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectMessage;
@@ -16,10 +14,14 @@ import com.skapral.parrot.itests.assertions.http.AssertHttp;
 import com.skapral.parrot.itests.assertions.http.StatusCode2XX;
 import com.skapral.parrot.itests.assertions.http.endpoints.GetListOfTasks;
 import com.skapral.parrot.itests.assertions.jdbc.AssertAssumingDbState;
+import com.skapral.parrot.itests.assertions.jdbc.AssertTableHasNumberOfRows;
 import com.skapral.parrot.itests.assertions.json.AssertJsonHas;
 import com.skapral.parrot.itests.utils.authentication.FakeAuthentication;
+import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.DockerComposeContainer;
@@ -57,6 +59,43 @@ public class TasksTest extends TestsSuite {
 
     public TasksTest() {
         super(
+            new TestCase(
+                "new assignee must be created when event about new user comes",
+                new AssertOnTestcontainersDeployment(
+                    ENVIRONMENT,
+                    deployment -> new AssertExpectingMessagesOnAmqp(
+                        new AssumingIncomingAmqpMessages(
+                            deployment.amqp("amqp", 5672, "guest", "guest"),
+                            "outbox",
+                            "",
+                            new AmqpMessage(
+                                new AMQP.BasicProperties.Builder()
+                                    .contentType("text/plain")
+                                    .type("USER_NEW")
+                                    .build(),
+                                new JSONObject(
+                                    HashMap.empty()
+                                        .put("id", "99999999-9999-9999-9999-999999999999")
+                                        .put("login", "testuser")
+                                        .put("role", "PARROT")
+                                        .toJavaMap()
+                                ).toString()
+                            )
+                        ),
+                        deployment.amqp("amqp", 5672, "guest", "guest"),
+                        List.of(
+                            new AmqpSource("outbox", "")
+                        ),
+                        deliveries -> new AssertionBasedExpectation(
+                            new AssertTableHasNumberOfRows(
+                                deployment.datasource("postgres", 5432, "tasks", "postgres", "admin"),
+                                "assignee",
+                                1
+                            )
+                        )
+                    )
+                )
+            ),
             new TestCase(
                 "user creates new task, but there are no assignees for it - reassigning tasks should not happen",
                 new AssertOnTestcontainersDeployment(
