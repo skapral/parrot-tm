@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,6 +59,7 @@ public class AuthRest {
         this.rabbittemplate = rabbitTemplate;
     }
 
+    @Secured("ADMIN")
     @PostMapping(value = "register", consumes = "application/json")
     public void register(@RequestBody UserCreation userCreation) {
         log.info("login = " + userCreation.getLogin());

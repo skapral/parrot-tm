@@ -25,17 +25,6 @@ public abstract class AuthenticationConfig extends SecurityConfig {
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors().disable()
-                .csrf().disable()
-                .httpBasic().disable()
-                .exceptionHandling().authenticationEntryPoint(authEntryPoint).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
