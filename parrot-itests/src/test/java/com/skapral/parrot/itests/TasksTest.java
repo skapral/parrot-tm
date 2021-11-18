@@ -4,6 +4,8 @@ import com.pragmaticobjects.oo.tests.AssertCombined;
 import com.pragmaticobjects.oo.tests.TestCase;
 import com.pragmaticobjects.oo.tests.junit5.TestsSuite;
 import com.rabbitmq.client.AMQP;
+import com.skapral.parrot.itests.assertions.AssertExpecting;
+import com.skapral.parrot.itests.assertions.AssertExpectingNotHappening;
 import com.skapral.parrot.itests.assertions.amqp.*;
 import com.skapral.parrot.itests.assertions.amqp.expectations.AssertionBasedExpectation;
 import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectAll;
@@ -63,7 +65,7 @@ public class TasksTest extends TestsSuite {
                 "new assignee must be created when event about new user comes",
                 new AssertOnTestcontainersDeployment(
                     ENVIRONMENT,
-                    deployment -> new AssertExpectingMessagesOnAmqp(
+                    deployment -> new AssertExpecting(
                         new AssumingIncomingAmqpMessages(
                             deployment.amqp("amqp", 5672, "guest", "guest"),
                             "outbox",
@@ -82,11 +84,40 @@ public class TasksTest extends TestsSuite {
                                 ).toString()
                             )
                         ),
-                        deployment.amqp("amqp", 5672, "guest", "guest"),
-                        List.of(
-                            new AmqpSource("outbox", "")
+                        new AssertionBasedExpectation(
+                            new AssertTableHasNumberOfRows(
+                                deployment.datasource("postgres", 5432, "tasks", "postgres", "admin"),
+                                "assignee",
+                                1
+                            )
+                        )
+                    )
+                )
+            ),
+            new TestCase(
+                "assignees should not be created when new user is not PARROT",
+                new AssertOnTestcontainersDeployment(
+                    ENVIRONMENT,
+                    deployment -> new AssertExpectingNotHappening(
+                        new AssumingIncomingAmqpMessages(
+                            deployment.amqp("amqp", 5672, "guest", "guest"),
+                            "outbox",
+                            "",
+                            new AmqpMessage(
+                                new AMQP.BasicProperties.Builder()
+                                    .contentType("text/plain")
+                                    .type("USER_NEW")
+                                    .build(),
+                                new JSONObject(
+                                    HashMap.empty()
+                                        .put("id", "99999999-9999-9999-9999-999999999999")
+                                        .put("login", "testuser")
+                                        .put("role", "MANAGER")
+                                        .toJavaMap()
+                                ).toString()
+                            )
                         ),
-                        deliveries -> new AssertionBasedExpectation(
+                        new AssertionBasedExpectation(
                             new AssertTableHasNumberOfRows(
                                 deployment.datasource("postgres", 5432, "tasks", "postgres", "admin"),
                                 "assignee",
