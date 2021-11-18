@@ -64,6 +64,7 @@ public class DockerComposeDeployment implements Deployment {
                         amqpFactory.setPort(port);
                         amqpFactory.setUsername(user);
                         amqpFactory.setPassword(password);
+                        amqpFactory.setAutomaticRecoveryEnabled(false);
                         var connection = amqpFactory.newConnection();
                         return connection;
                     } catch (Exception ex) {
