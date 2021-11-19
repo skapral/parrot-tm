@@ -18,5 +18,5 @@ public class TransactionLog {
     private UUID accountId;
     private String description;
     private Integer debit;
-    private Integer crebit;
+    private Integer credit;
 }

@@ -45,6 +45,12 @@ class Account extends React.Component {
         });
     }
 
+    format_time(s) {
+        const dtFormat = new Intl.DateTimeFormat('en-US');
+
+        return new Date(s).toLocaleString();
+    }
+
     render() {
         return (
             <div className="Account">
@@ -64,7 +70,7 @@ class Account extends React.Component {
                     {
                         this.state.log.map(t => {
                             return <tr>
-                                <td>{t.time}</td>
+                                <td>{this.format_time(t.time)}</td>
                                 <td>{t.description}</td>
                                 <td>{t.debit}</td>
                                 <td>{t.credit}</td>

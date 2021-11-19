@@ -15,6 +15,6 @@ public class IdsOfTasksInProgress implements Query<List<UUID>> {
 
     @Override
     public final List<UUID> get() {
-        return List.ofAll(template.queryForList("SELECT id FROM tasks WHERE status = 'IN_PROGRESS'", UUID.class));
+        return List.ofAll(template.queryForList("SELECT id FROM task WHERE status = 'IN_PROGRESS'", UUID.class));
     }
 }

@@ -31,8 +31,8 @@ public class GetTransactionLog implements Query<List<TransactionLog>> {
                 "SELECT id, time, accountid, description, debit, credit FROM transactionlog WHERE accountid = ? AND time BETWEEN ? AND ?",
                 new TransactionLogRowMapper(),
                 accountId,
-                now,
-                then
+                then,
+                now
             )
         );
     }

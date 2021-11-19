@@ -19,7 +19,7 @@ public class ChargeFeeForTaskAssignment implements Operation {
     @Override
     public final void execute() {
         var feeForAssignment = template.queryForObject("SELECT penalty FROM taskcost WHERE taskid = ?", Integer.class, taskId);
-        template.update("UPDATE account SET value = value - ? WHERE id = ?", feeForAssignment, assigneeId);
+        template.update("UPDATE account SET money = money - ? WHERE id = ?", feeForAssignment, assigneeId);
         template.update("INSERT INTO transactionlog (id, accountid, description, credit) values (?, ?, ?, ?)",
                 UUID.randomUUID(), assigneeId, "Charged fee for task assignment - " + taskId, feeForAssignment);
     }

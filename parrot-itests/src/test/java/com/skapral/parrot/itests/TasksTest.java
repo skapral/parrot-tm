@@ -14,6 +14,7 @@ import com.skapral.parrot.itests.assertions.amqp.expectations.ExpectMessageAbsen
 import com.skapral.parrot.itests.assertions.business.TaskCreation;
 import com.skapral.parrot.itests.assertions.http.AssertHttp;
 import com.skapral.parrot.itests.assertions.http.StatusCode2XX;
+import com.skapral.parrot.itests.assertions.http.endpoints.AssignTasks;
 import com.skapral.parrot.itests.assertions.http.endpoints.GetListOfTasks;
 import com.skapral.parrot.itests.assertions.jdbc.AssertAssumingDbState;
 import com.skapral.parrot.itests.assertions.jdbc.AssertTableHasNumberOfRows;
@@ -222,6 +223,24 @@ public class TasksTest extends TestsSuite {
                                 new StatusCode2XX(resp),
                                 new AssertJsonHas(resp.body(), "[_, _, _]", JSONCompareMode.STRICT)
                             )
+                        )
+                    )
+                )
+            ),
+            new TestCase(
+                "assigning all tasks",
+                new AssertOnTestcontainersDeployment(
+                    ENVIRONMENT,
+                    deployment -> new AssertHttp(
+                        new AssignTasks(
+                            new FakeAuthentication(
+                                "phantom",
+                                "MANAGER"
+                            ),
+                            deployment.serviceURI("tasks-service", 8080)
+                        ),
+                        resp -> new AssertCombined(
+                            new StatusCode2XX(resp)
                         )
                     )
                 )
