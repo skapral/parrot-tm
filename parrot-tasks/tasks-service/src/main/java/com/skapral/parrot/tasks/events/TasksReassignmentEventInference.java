@@ -1,5 +1,6 @@
 package com.skapral.parrot.tasks.events;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pragmaticobjects.oo.inference.api.Inference;
 import com.pragmaticobjects.oo.inference.api.Infers;
 import com.skapral.parrot.common.Event;
@@ -10,16 +11,18 @@ import com.skapral.parrot.common.events.data.TaskAssignments;
 import com.skapral.parrot.common.events.impl.NoEvent;
 import com.skapral.parrot.common.events.impl.RabbitEvent;
 import io.vavr.collection.List;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public @Infers(value = "TasksReassignmentEvent", using = EventInferred.class) class TasksReassignmentEventInference implements Inference<Event> {
-    private final RabbitTemplate rabbitTemplate;
+    private final JdbcTemplate template;
+    private final ObjectMapper objectMapper;
     private final String exchange;
     private final String routingKey;
     private final List<TaskAssignment> taskAssignments;
 
-    public TasksReassignmentEventInference(RabbitTemplate rabbitTemplate, String exchange, String routingKey, List<TaskAssignment> taskAssignments) {
-        this.rabbitTemplate = rabbitTemplate;
+    public TasksReassignmentEventInference(JdbcTemplate template, ObjectMapper objectMapper, String exchange, String routingKey, List<TaskAssignment> taskAssignments) {
+        this.template = template;
+        this.objectMapper = objectMapper;
         this.exchange = exchange;
         this.routingKey = routingKey;
         this.taskAssignments = taskAssignments;
@@ -31,7 +34,8 @@ public @Infers(value = "TasksReassignmentEvent", using = EventInferred.class) cl
             return new NoEvent();
         }
         return new RabbitEvent<>(
-            rabbitTemplate,
+            template,
+            objectMapper,
             exchange,
             routingKey,
             EventType.TASKS_REASSIGNED,

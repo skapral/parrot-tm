@@ -1,5 +1,6 @@
 package com.skapral.parrot.tasks.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pragmaticobjects.oo.memoized.chm.MemoryCHM;
 import com.skapral.parrot.common.DoAndNotify;
 import com.skapral.parrot.common.SequentialOperation;
@@ -14,7 +15,6 @@ import com.skapral.parrot.tasks.ops.CreateTask;
 import com.skapral.parrot.tasks.ops.DoTaskAssignments;
 import com.skapral.parrot.tasks.queries.*;
 import io.vavr.collection.List;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
@@ -34,7 +34,7 @@ public class TasksRest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private Random random;
@@ -69,14 +69,16 @@ public class TasksRest {
             ),
             new MultipleEvents(
                 new RabbitEvent<>(
-                    rabbitTemplate,
+                    jdbcTemplate,
+                    objectMapper,
                     "outbox",
                     "",
                     EventType.TASK_NEW,
                     new com.skapral.parrot.common.events.data.Task(taskId)
                 ),
                 new TasksReassignmentEvent(
-                    rabbitTemplate,
+                    jdbcTemplate,
+                    objectMapper,
                     "outbox",
                     "",
                     taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
@@ -93,7 +95,8 @@ public class TasksRest {
                 id
             ),
             new RabbitEvent<>(
-                rabbitTemplate,
+                jdbcTemplate,
+                objectMapper,
                 "outbox",
                 "",
                 EventType.TASK_COMPLETED,
@@ -126,7 +129,8 @@ public class TasksRest {
                 taskAssignments
             ),
             new TasksReassignmentEvent(
-                rabbitTemplate,
+                jdbcTemplate,
+                objectMapper,
                 "outbox",
                 "",
                 taskAssignments.map(ta -> new TaskAssignment(ta.getAssigneeId(), ta.getTaskId()))
