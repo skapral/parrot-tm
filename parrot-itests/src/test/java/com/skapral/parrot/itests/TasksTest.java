@@ -44,6 +44,7 @@ public class TasksTest extends TestsSuite {
         .withExposedService("tasks-service", 8080)
         .withExposedService("postgres", 5432)
         .withLogConsumer("tasks-service", new Slf4jLogConsumer(LoggerFactory.getLogger("TASKS     ")))
+        .withLogConsumer("amqp", new Slf4jLogConsumer(LoggerFactory.getLogger("AMQP      ")))
         .waitingFor("tasks-service", Wait.forLogMessage(".*Started Main.*", 1))
         .waitingFor("amqp", Wait.forLogMessage(".*Server startup complete.*", 1));
 

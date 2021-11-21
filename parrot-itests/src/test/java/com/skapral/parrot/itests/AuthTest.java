@@ -42,6 +42,7 @@ public class AuthTest extends TestsSuite {
                     .withExposedService("amqp", 5672)
                     .withExposedService("postgres", 5432)
                     .withLogConsumer("auth-service", new Slf4jLogConsumer(LoggerFactory.getLogger("AUTH      ")))
+                    .withLogConsumer("amqp", new Slf4jLogConsumer(LoggerFactory.getLogger("AMQP      ")))
                     .waitingFor("auth-service", Wait.forLogMessage(".*Started Main.*", 1))
                     .waitingFor("amqp", Wait.forLogMessage(".*Server startup complete.*", 1));
 

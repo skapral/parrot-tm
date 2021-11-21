@@ -1,21 +1,25 @@
 package com.skapral.parrot.common.events.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skapral.parrot.common.Event;
 import com.skapral.parrot.common.events.EventType;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public class RabbitEvent<T> implements Event {
-    private final RabbitTemplate template;
+    private final JdbcTemplate template;
+    private final ObjectMapper objectMapper;
     private final String exchange;
     private final String routingKey;
     private final EventType type;
     private final T payload;
 
-    public RabbitEvent(RabbitTemplate template, String exchange, String routingKey, EventType type, T payload) {
+    public RabbitEvent(JdbcTemplate template, ObjectMapper objectMapper, String exchange, String routingKey, EventType type, T payload) {
         this.template = template;
+        this.objectMapper = objectMapper;
         this.exchange = exchange;
         this.routingKey = routingKey;
         this.type = type;
@@ -24,26 +28,17 @@ public class RabbitEvent<T> implements Event {
 
     @Override
     public final void send() {
-        Class<?> clazz = null;
-        if(payload instanceof Iterable<?>) {
-            var iter = ((Iterable<?>) payload).iterator();
-            if(iter.hasNext()) {
-                clazz = iter.next().getClass();
-            }
-        }
-        var _c = clazz;
-        template.convertAndSend(
+        try {
+            String payloadStr = objectMapper.writeValueAsString(payload);
+            template.update("INSERT INTO outbox (id, type, outbox, routingKey, payload) VALUES (?, ?, ?, ?, ?)",
+                UUID.randomUUID(),
+                type.name(),
                 exchange,
                 routingKey,
-                payload,
-                message -> {
-                    var props = message.getMessageProperties();
-                    props.setMessageId(UUID.randomUUID().toString());
-                    props.setType(type.name());
-                    // Nasty hack to overcome generics erasion
-                    Optional.ofNullable(_c).ifPresent(c -> props.setHeader("__ContentTypeId__", c.getName()));
-                    return message;
-                }
-        );
+                payloadStr
+            );
+        } catch(Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.skapral.parrot.auth.security;
 
 import com.skapral.parrot.common.data.SpringDataJdbc;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

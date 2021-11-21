@@ -1,6 +1,7 @@
 package com.skapral.parrot.auth.rest;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skapral.parrot.auth.common.RoleAuthority;
 import com.skapral.parrot.auth.common.jwt.JwtClaim;
 import com.skapral.parrot.auth.common.jwt.JwtUtils;
@@ -8,7 +9,6 @@ import com.skapral.parrot.auth.ops.CreateUserIfDoesntExist;
 import com.skapral.parrot.auth.queries.UserById;
 import io.vavr.collection.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,14 +49,14 @@ public class AuthRest {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final JdbcTemplate jdbcTemplate;
-    private final RabbitTemplate rabbittemplate;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public AuthRest(AuthenticationManager authenticationManager, JwtUtils jwtUtils, JdbcTemplate jdbcTemplate, RabbitTemplate rabbitTemplate) {
+    public AuthRest(AuthenticationManager authenticationManager, JwtUtils jwtUtils, JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.jdbcTemplate = jdbcTemplate;
-        this.rabbittemplate = rabbitTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @Secured("ADMIN")
@@ -66,7 +66,7 @@ public class AuthRest {
         log.info("role = " + userCreation.getRole());
         new CreateUserIfDoesntExist(
             jdbcTemplate,
-            rabbittemplate,
+            objectMapper,
             UUID.randomUUID(),
             userCreation.getLogin(),
             userCreation.getRole()
