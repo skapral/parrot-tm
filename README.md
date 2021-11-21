@@ -50,6 +50,10 @@ Some complementay service-unrelated docker images, necessary for the system oper
 ### [Parrot commons](parrot-commons)
 
 Consists of some Maven modules, shared between the services.
+- `commons-config` is some common Spring Boot configuration shared between the services. Currently it contains common Jackson configuration for serializing/deserializing AMQP messages and HTTP requests/responses.
+- `spring-jdbc-config` is a common configuration of Postgres RDBMS for the services. It uses HikaryCP connection pool, configured with FlywayDB for Schema versioning and update (schemas are expected at `classpath:/db/migration`) for each service.
+- `events-config` is a common configuration of messaging by means of RabbitMQ between the services. It also provides implementation for transactional outbox, implemented over PostgreSQL.
+- `auth-common` is a common configuration for authentication/authorization by means of Spring Security and JWT.
 
 ### [Authentication service](parrot-auth)
 
@@ -61,7 +65,7 @@ The service, responcible for managing the tasks, their status and assignments
 
 ### [Accounting service](parrot-accounting)
 
-TODO: billing and accounting service
+Billing and accounting service
 
 ### [Analytics service](parrot-analytics)
 
